@@ -127,5 +127,4 @@ class GameLogic {
     if (count < this.eliminationScore * 0.8) return 'count-yellow';
     return 'count-red';
   }
-
 }

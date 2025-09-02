@@ -451,5 +451,4 @@ class UIManager {
 
     setTimeout(() => confetti.remove(), 1500);
   }
-
 }
