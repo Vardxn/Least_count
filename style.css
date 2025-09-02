@@ -1,11 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lato:wght@400;500;600&family=Fira+Sans:wght@400;500;600&family=Cabin:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap');
 
+/* Critical iOS Safari fixes - Must be first */
+@supports (-webkit-appearance: none) {
+    html, body {
+        background: radial-gradient(ellipse at center, #2C2C2E 0%, #1C1C1E 70%) !important;
+        background-attachment: fixed !important;
+        min-height: 100vh !important;
+        min-height: -webkit-fill-available !important;
+    }
+}
+
+/* Universal iOS optimizations */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+html {
+    height: 100%;
+    height: -webkit-fill-available;
+    background:
+        radial-gradient(ellipse at center, #2C2C2E 0%, #1C1C1E 70%),
+        linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 50%, #1C1C1E 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
 body {
     font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
     background:
         radial-gradient(ellipse at center, #2C2C2E 0%, #1C1C1E 70%),
         linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 50%, #1C1C1E 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -13,6 +47,10 @@ body {
     padding: 0;
     position: relative;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Subtle animated background shimmer */
@@ -62,13 +100,22 @@ body::before {
 }
 
 .glass {
+    /* Primary background with opacity fallback */
     background: rgba(255, 255, 255, 0.15);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.12) 100%);
+    
+    /* Enhanced box shadow for depth */
     box-shadow:
         0 8px 32px 0 rgba(0, 0, 0, 0.3),
         0 0 0 1px rgba(255, 255, 255, 0.2) inset,
-        0 2px 16px 0 rgba(255, 255, 255, 0.1) inset;
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+        0 2px 16px 0 rgba(255, 255, 255, 0.1) inset,
+        0 1px 0 rgba(255, 255, 255, 0.3) inset;
+    
+    /* Backdrop filter with Safari optimizations */
+    backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
+    -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
+    
+    /* Border and layout */
     border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 2rem;
@@ -81,6 +128,11 @@ body::before {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    
+    /* iOS Safari specific fixes */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 /* Add a subtle texture overlay */
@@ -632,11 +684,159 @@ h1 {
     }
 }
 
+/* iPhone Specific Optimizations */
+@media screen and (max-device-width: 428px) and (-webkit-min-device-pixel-ratio: 2) {
+    /* Force minimum height to prevent viewport issues */
+    html, body {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        background: radial-gradient(ellipse at top, #1a1a2e 0%, #16213e 40%, #0f3460 100%) !important;
+        background-attachment: fixed !important;
+    }
+    
+    /* Enhanced glass effect for iOS Safari */
+    .glass {
+        background: rgba(255, 255, 255, 0.18) !important;
+        backdrop-filter: blur(25px) saturate(180%) brightness(1.1) !important;
+        -webkit-backdrop-filter: blur(25px) saturate(180%) brightness(1.1) !important;
+        border: 2px solid rgba(255, 255, 255, 0.25) !important;
+        box-shadow: 
+            0 8px 32px 0 rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.3) inset,
+            0 2px 16px 0 rgba(255, 255, 255, 0.15) inset !important;
+        padding: 1.5rem !important;
+        max-width: 95vw !important;
+        margin: 1rem auto !important;
+        margin-top: max(1rem, env(safe-area-inset-top)) !important;
+        margin-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+    }
+    
+    /* iOS Safe Area Support */
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    /* Enhanced round counter for iPhone */
+    .round-counter {
+        background: rgba(100, 210, 255, 0.15) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px) !important;
+        border: 2px solid rgba(100, 210, 255, 0.3) !important;
+        font-size: 1.1rem !important;
+        padding: 0.9rem 1.3rem !important;
+        box-shadow: 0 4px 20px rgba(100, 210, 255, 0.2) !important;
+    }
+    
+    /* Player cards optimized for iPhone touch */
+    .player {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(120, 119, 198, 0.15) 100%) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 2px solid rgba(255, 255, 255, 0.25) !important;
+        padding: 1rem !important;
+        min-height: 70px !important;
+        touch-action: manipulation !important;
+    }
+    
+    /* Larger touch targets for iPhone */
+    .score-controls button {
+        min-width: 44px !important;
+        min-height: 44px !important;
+        font-size: 1.2rem !important;
+        touch-action: manipulation !important;
+    }
+    
+    /* Action buttons optimized for iPhone */
+    .action-buttons button {
+        min-height: 48px !important;
+        font-size: 1rem !important;
+        padding: 0.8rem 1.5rem !important;
+        background: rgba(0, 122, 255, 0.2) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        touch-action: manipulation !important;
+    }
+    
+    /* Typography optimized for iPhone screens */
+    h1 {
+        font-size: 1.75rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .player-name {
+        font-size: 1.1rem !important;
+    }
+    
+    .score-display {
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Input fields optimized for iPhone */
+    .floating-label input {
+        min-height: 44px !important;
+        font-size: 16px !important; /* Prevents zoom on focus */
+        background: rgba(255, 255, 255, 0.6) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+    }
+    
+    /* Add player button for iPhone */
+    .add-player button {
+        min-height: 48px !important;
+        font-size: 1rem !important;
+        background: rgba(0, 122, 255, 0.2) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        touch-action: manipulation !important;
+    }
+    
+    /* Prevent horizontal scrolling on iPhone */
+    .players {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Shimmer background enhanced for iPhone */
+    .shimmer-bg::before {
+        opacity: 0.8 !important;
+        background: radial-gradient(ellipse at top, #1a1a2e 0%, #16213e 40%, #0f3460 100%) !important;
+    }
+    
+    /* Modal optimizations for iPhone */
+    .modal {
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    .modal-content {
+        background: rgba(255, 255, 255, 0.2) !important;
+        backdrop-filter: blur(25px) !important;
+        -webkit-backdrop-filter: blur(25px) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        max-width: 90vw !important;
+        margin: 2rem auto !important;
+    }
+}
+
+/* Standard mobile styles (fallback) */
 @media (max-width: 600px) {
     .glass {
         padding: 1.5rem;
         max-width: 95vw;
         margin-top: 1rem;
+        background: rgba(255, 255, 255, 0.16);
+        backdrop-filter: blur(30px) saturate(180%);
+        -webkit-backdrop-filter: blur(30px) saturate(180%);
+        border: 1.5px solid rgba(255, 255, 255, 0.25);
     }
 
     h1 {
@@ -645,6 +845,9 @@ h1 {
 
     .player {
         padding: 0.75rem;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(120, 119, 198, 0.12) 100%);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
     }
 
     .add-round-btn {
