@@ -99,10 +99,11 @@ class UIManager {
                     <div class="player-name" data-idx="${idx}">${player.name}</div>
                     ${lastRoundBadge}
                     <div class="round-history">${roundHistoryHtml}</div>
-                    <div class="player-counter-tab">
-                        <button class="counter-btn" data-idx="${idx}" data-action="minus" ${player.out ? 'disabled' : ''}>−</button>
-                        <span class="score-value" id="score_${idx}">${player.count}</span>
-                        <button class="counter-btn" data-idx="${idx}" data-action="plus" ${player.out ? 'disabled' : ''}>+</button>
+                    <div class="click-to-add-container" data-idx="${idx}" ${player.out ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
+                        <div class="click-to-add-text">Click to add score</div>
+                        <div class="current-score-display">
+                            <span class="score-value" id="score_${idx}">${player.count}</span>
+                        </div>
                     </div>
                     <div class="player-count ${countClass}">
                         ${this.gameLogic.currentRound === 1 ? 'Round 1' : `R${this.gameLogic.currentRound}`}: 
@@ -162,17 +163,13 @@ class UIManager {
       });
     });
 
-    document.querySelectorAll('.counter-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const idx = parseInt(btn.getAttribute('data-idx'));
-        const action = btn.getAttribute('data-action');
-        this.gameLogic.updatePlayerScore(idx, action);
-
-        const scoreElement = document.getElementById(`score_${idx}`);
-        scoreElement.classList.add('score-change');
-        setTimeout(() => scoreElement.classList.remove('score-change'), 400);
-
-        this.renderPlayers();
+    document.querySelectorAll('.click-to-add-container').forEach((container) => {
+      container.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = parseInt(container.getAttribute('data-idx'));
+        if (!this.gameLogic.players[idx].out) {
+          this.showScoreInput(idx, container);
+        }
       });
     });
 
@@ -196,6 +193,95 @@ class UIManager {
           if (e.key === 'Enter') input.blur();
         });
       });
+    });
+  }
+
+  showScoreInput(playerIdx, container) {
+    // Create input overlay
+    const inputOverlay = document.createElement('div');
+    inputOverlay.className = 'score-input-overlay';
+    
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.className = 'score-input';
+    input.placeholder = 'Enter score';
+    input.min = '0';
+    input.max = '50';
+    input.autocomplete = 'off';
+    
+    const confirmBtn = document.createElement('button');
+    confirmBtn.className = 'score-confirm-btn';
+    confirmBtn.textContent = 'Add';
+    confirmBtn.type = 'button';
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'score-cancel-btn';
+    cancelBtn.textContent = '×';
+    cancelBtn.type = 'button';
+    
+    inputOverlay.appendChild(input);
+    inputOverlay.appendChild(confirmBtn);
+    inputOverlay.appendChild(cancelBtn);
+    
+    // Replace container content temporarily
+    const originalContent = container.innerHTML;
+    container.innerHTML = '';
+    container.appendChild(inputOverlay);
+    container.classList.add('input-active');
+    
+    // Focus input and select all
+    setTimeout(() => {
+      input.focus();
+      input.select();
+    }, 50);
+    
+    const handleConfirm = () => {
+      const scoreToAdd = parseInt(input.value) || 0;
+      if (scoreToAdd > 0) {
+        // Add the score multiple times based on input
+        for (let i = 0; i < scoreToAdd; i++) {
+          this.gameLogic.updatePlayerScore(playerIdx, 'plus');
+        }
+        
+        // Show score change animation
+        setTimeout(() => {
+          const scoreElement = document.getElementById(`score_${playerIdx}`);
+          if (scoreElement) {
+            scoreElement.classList.add('score-change');
+            setTimeout(() => scoreElement.classList.remove('score-change'), 400);
+          }
+        }, 100);
+      }
+      
+      container.classList.remove('input-active');
+      this.renderPlayers();
+    };
+    
+    const handleCancel = () => {
+      container.innerHTML = originalContent;
+      container.classList.remove('input-active');
+    };
+    
+    confirmBtn.addEventListener('click', handleConfirm);
+    cancelBtn.addEventListener('click', handleCancel);
+    
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleConfirm();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        handleCancel();
+      }
+    });
+    
+    // Auto-cancel on blur after a delay
+    input.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (document.activeElement !== confirmBtn && document.activeElement !== cancelBtn) {
+          handleCancel();
+        }
+      }, 100);
     });
   }
 
