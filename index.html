@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Least Count - A premium card game scoring app with liquid glass design">
+    <meta name="keywords" content="card game, scoring, least count, mobile game">
+    <meta name="theme-color" content="#64D2FF">
+    <link rel="manifest" href="manifest.json">
+    <title>Least Count - Premium Card Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 50%, #1C1C1E 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .redirect-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(40px);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #FFFFFF;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .redirect-btn {
+            background: linear-gradient(135deg, #64D2FF 0%, #30D158 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .redirect-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+    <script>
+        // Auto-redirect after 2 seconds or when button is clicked
+        setTimeout(() => {
+            window.location.href = 'least_count.html';
+        }, 2000);
+    </script>
+</head>
+
+<body>
+    <div class="redirect-container">
+        <h1>🎮 Least Count</h1>
+        <p>Premium card game scoring app</p>
+        <a href="least_count.html" class="redirect-btn">Start Playing</a>
+        <p style="font-size: 0.9rem; margin-top: 1rem;">Auto-redirecting in 2 seconds...</p>
+    </div>
+</body>
+
+</html>
