@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Least Count</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="glass">
+        <h1>Least Count</h1>
+        <button class="reset-btn" id="resetBtn" title="Reset Game">&#x21bb;</button>
+        <div class="glass-divider"></div>
+        <form class="add-player" id="addPlayerForm">
+            <button type="button" id="showAddPlayerInput">Add Player</button>
+        </form>
+        <div class="glass-divider"></div>
+        <div class="players" id="playersList"></div>
+        <form class="add-round" id="addRoundForm" style="display:none;">
+            <div id="roundInputs"></div>
+            <button type="submit">Add Round</button>
+        </form>
+    </div>
+    <script>
+        const addPlayerForm = document.getElementById('addPlayerForm');
+        const playerNameInput = document.getElementById('playerName');
+        const playersList = document.getElementById('playersList');
+        const addRoundForm = document.getElementById('addRoundForm');
+        const roundInputs = document.getElementById('roundInputs');
+
+        // Default players with avatars
+        const avatarImages = [
+            'avatars/avatars.png',
+            'avatars/Background.jpg',
+            'avatars/boy.png',
+            'avatars/male-cartoon.png',
+            'avatars/male.png',
+            'avatars/man.png',
+            'avatars/people.png',
+            'avatars/user.png'
+        ];
+        let players = [
+            { name: 'Player 1', picUrl: avatarImages[0], count: 0, out: false },
+            { name: 'Player 2', picUrl: avatarImages[1], count: 0, out: false },
+            { name: 'Player 3', picUrl: avatarImages[2], count: 0, out: false },
+            { name: 'Player 4', picUrl: avatarImages[3], count: 0, out: false }
+        ];
+        let lastRoundScores = [];
+
+        // Add player button shows input prompt only when clicked
+        document.getElementById('showAddPlayerInput').addEventListener('click', function () {
+            // Create a modal or inline prompt for player name
+            let promptDiv = document.getElementById('addPlayerPrompt');
+            if (!promptDiv) {
+                promptDiv = document.createElement('div');
+                promptDiv.id = 'addPlayerPrompt';
+                promptDiv.style.marginTop = '1em';
+                promptDiv.innerHTML = `
+                    <input type="text" id="playerName" placeholder="Player Name" style="padding:0.7em; border-radius:8px; border:1px solid #bcdffb; font-size:1em;">
+                    <button id="confirmAddPlayer" style="margin-left:0.5em; padding:0.7em 1.2em; border-radius:8px; background:#7AABFF; color:#222; border:none; font-weight:600;">Add</button>
+                    <button id="cancelAddPlayer" style="margin-left:0.5em; padding:0.7em 1.2em; border-radius:8px; background:#eee; color:#222; border:none; font-weight:600;">Cancel</button>
+                `;
+                addPlayerForm.appendChild(promptDiv);
+                document.getElementById('playerName').focus();
+                document.getElementById('confirmAddPlayer').onclick = function () {
+                    const name = document.getElementById('playerName').value.trim();
+                    if (!name) return;
+                    const avatarIdx = players.length % avatarImages.length;
+                    addPlayer(name, avatarImages[avatarIdx]);
+                    promptDiv.remove();
+                };
+                document.getElementById('cancelAddPlayer').onclick = function () {
+                    promptDiv.remove();
+                };
+            }
+        });
+
+        function addPlayer(name, picUrl) {
+            players.push({ name, picUrl, count: 0, out: false });
+            renderPlayers();
+            if (players.length > 1) {
+                addRoundForm.style.display = '';
+                renderRoundInputs();
+            }
+        }
+
+        function getCountClass(count) {
+            if (count >= 100) return 'count-max';
+            if (count < 50) return 'count-green';
+            if (count < 80) return 'count-yellow';
+            return 'count-red';
+        }
+
+        function getProgressColor(count) {
+            if (count >= 100) return '#e74c3c';
+            if (count < 50) return '#2ecc40';
+            if (count < 80) return '#f1c40f';
+            return '#e74c3c';
+        }
+
+        function renderPlayers() {
+            playersList.innerHTML = '';
+            // Find the closest to elimination (highest score < 100)
+            let maxScore = -1, maxIdx = -1;
+            players.forEach((p, i) => {
+                if (!p.out && p.count < 100 && p.count > maxScore) {
+                    maxScore = p.count;
+                    maxIdx = i;
+                }
+            });
+            players.forEach((player, idx) => {
+                const div = document.createElement('div');
+                div.className = 'player' + (player.out ? ' out' : '') + (idx === maxIdx ? ' highlight' : '');
+                const circumference = 2 * Math.PI * 26;
+                const progress = Math.min(player.count, 100);
+                const offset = circumference * (1 - progress / 100);
+                const progressRing = `
+                  <svg class="avatar-progress" width="56" height="56">
+                    <circle cx="28" cy="28" r="26" stroke="#e0eafc" stroke-width="4" fill="none"/>
+                    <circle cx="28" cy="28" r="26" stroke="${getProgressColor(player.count)}" stroke-width="4" fill="none" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" style="transition:stroke-dashoffset 0.5s"/>
+                  </svg>
+                `;
+                // Count color
+                const countClass = getCountClass(player.count);
+                // Show total in light text if > 1000
+                const totalClass = player.count >= 1000 ? 'player-total-light' : 'player-total';
+                // Last round score badge
+                const lastScore = lastRoundScores[idx] || 0;
+                const lastRoundBadge = lastScore !== 0 ? `<span class="last-round-badge">+${lastScore}</span>` : '';
+                // Use player's picUrl for avatar
+                const avatarSrc = player.picUrl || avatarImages[idx % avatarImages.length];
+                div.innerHTML = `
+                    <div class="avatar-ring">
+                        <img src="${avatarSrc}" alt="Profile">
+                        ${progressRing}
+                    </div>
+                    <div class="player-info">
+                        <div class="player-name">${player.name}</div>
+                        ${lastRoundBadge}
+                        <div class="player-counter-tab">
+                            <button class="counter-btn" data-idx="${idx}" data-action="minus" ${player.out ? 'disabled' : ''}>−</button>
+                            <span class="score-value" id="score_${idx}">${player.count}</span>
+                            <button class="counter-btn" data-idx="${idx}" data-action="plus" ${player.out ? 'disabled' : ''}>+</button>
+                        </div>
+                        <div class="player-count ${countClass}">Count: <span class="score-value">${player.count}</span></div>
+                        <div class="${totalClass}">Total: ${player.count}</div>
+                    </div>
+                `;
+                // Animate avatar if score just changed or eliminated
+                if (player._animate) {
+                    div.querySelector('.avatar-ring img').classList.add('bounce');
+                    setTimeout(() => {
+                        div.querySelector('.avatar-ring img').classList.remove('bounce');
+                    }, 600);
+                    player._animate = false;
+                }
+                // Confetti for elimination
+                if (player._confetti) {
+                    showConfetti();
+                    player._confetti = false;
+                }
+                playersList.appendChild(div);
+            });
+            // Add event listeners for plus/minus buttons
+            document.querySelectorAll('.counter-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const idx = parseInt(this.getAttribute('data-idx'));
+                    const action = this.getAttribute('data-action');
+                    if (players[idx].out) return;
+                    if (action === 'plus') {
+                        players[idx].count++;
+                        players[idx].lastRound = 1;
+                    } else if (action === 'minus' && players[idx].count > 0) {
+                        players[idx].count--;
+                        players[idx].lastRound = -1;
+                    }
+                    renderPlayers();
+                });
+            });
+        }
+
+        // ...existing code...
+
+        // ...existing code...
+
+        // ...existing code...
+
+        // ...existing code...
+
+        // ...existing code...
+        // On page load, render default players and round inputs
+        window.addEventListener('DOMContentLoaded', function () {
+            renderPlayers();
+            addRoundForm.style.display = players.length >= 2 ? '' : 'none';
+            renderRoundInputs();
+        });
+    </script>
+</body>
+
+</html>
