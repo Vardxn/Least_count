@@ -35,16 +35,11 @@ class GameLogic {
     return false;
   }
 
-  updatePlayerScore(playerIndex, action) {
+  updatePlayerScore(playerIndex, score) {
     if (this.players[playerIndex].out) return;
 
     this.saveGameState();
-
-    if (action === 'plus') {
-      this.players[playerIndex].count++;
-    } else if (action === 'minus' && this.players[playerIndex].count > 0) {
-      this.players[playerIndex].count--;
-    }
+    this.players[playerIndex].count += score;
   }
 
   completeRound() {

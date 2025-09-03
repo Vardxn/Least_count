@@ -197,147 +197,88 @@ class UIManager {
   }
 
   showScoreInput(playerIdx, container) {
+    // If input is already shown, do nothing
+    if (container.classList.contains('input-active')) {
+      return;
+    }
+
+    const originalText = container.querySelector('.click-to-add-text');
+    if(originalText) originalText.style.display = 'none';
+
     // Create input overlay
     const inputOverlay = document.createElement('div');
     inputOverlay.className = 'score-input-overlay';
 
-    // Use InputHandler to create optimized input
-    const input = window.inputHandler ? window.inputHandler.createOptimizedInput('tel', 'Score') : document.createElement('input');
-
-    if (!window.inputHandler) {
-      // Fallback if InputHandler not available
-      input.type = 'tel';
-      input.placeholder = 'Score';
-    }
-
+    const input = document.createElement('input');
+    input.type = 'tel';
     input.className = 'score-input';
     input.setAttribute('inputmode', 'numeric');
     input.setAttribute('pattern', '[0-9]*');
-    input.setAttribute('minlength', '1');
-    input.setAttribute('maxlength', '3');
-    input.style.fontSize = '16px'; // Force 16px to allow zoom on focus
-    input.autocomplete = 'off';
-    input.autocorrect = 'off';
-    input.autocapitalize = 'off';
-    input.spellcheck = false;
-    input.setAttribute('min', '0');
-    input.setAttribute('max', '50');
-
-    input.addEventListener('focus', () => console.log('Focus event on score input'));
+    input.style.fontSize = '16px'; // iOS zoom fix
 
     const confirmBtn = document.createElement('button');
     confirmBtn.className = 'score-confirm-btn';
     confirmBtn.textContent = 'Add';
-    confirmBtn.type = 'button';
 
     const cancelBtn = document.createElement('button');
     cancelBtn.className = 'score-cancel-btn';
     cancelBtn.textContent = '×';
-    cancelBtn.type = 'button';
 
     inputOverlay.appendChild(input);
     inputOverlay.appendChild(confirmBtn);
     inputOverlay.appendChild(cancelBtn);
 
-    // Replace container content temporarily
-    const originalContent = container.innerHTML;
-    container.innerHTML = '';
     container.appendChild(inputOverlay);
     container.classList.add('input-active');
+    input.focus();
 
-    container.addEventListener('click', () => {
-        input.focus();
-    });
-
-    // Use InputHandler to focus input or fallback
-    const focusInput = () => {
-      if (window.inputHandler) {
-        window.inputHandler.focusInput(input);
-      } else {
-        // Fallback focus logic
-        input.focus();
-        input.click();
-        setTimeout(() => {
-          input.focus();
-          input.select();
-        }, 100);
-      }
+    const cleanup = () => {
+      container.classList.remove('input-active');
+      inputOverlay.remove();
+      if(originalText) originalText.style.display = 'block';
+      document.removeEventListener('click', outsideClickListener);
     };
-
-    // Try immediate focus and delayed focus
-    setTimeout(focusInput, 150);
 
     const handleConfirm = () => {
       const scoreToAdd = parseInt(input.value) || 0;
       if (scoreToAdd > 0) {
-        // Add the score multiple times based on input
-        for (let i = 0; i < scoreToAdd; i++) {
-          this.gameLogic.updatePlayerScore(playerIdx, 'plus');
-        }
-
-        // Show score change animation
-        setTimeout(() => {
-          const scoreElement = document.getElementById(`score_${playerIdx}`);
-          if (scoreElement) {
-            scoreElement.classList.add('score-change');
-            setTimeout(() => scoreElement.classList.remove('score-change'), 400);
-          }
-        }, 100);
+        this.gameLogic.updatePlayerScore(playerIdx, scoreToAdd);
       }
-
-      container.classList.remove('input-active');
+      cleanup();
       this.renderPlayers();
     };
 
     const handleCancel = () => {
-      if (window.inputHandler) {
-        window.inputHandler.blurInput(input);
-      }
-      container.innerHTML = originalContent;
-      container.classList.remove('input-active');
+      cleanup();
     };
 
-    confirmBtn.addEventListener('click', handleConfirm);
-    cancelBtn.addEventListener('click', handleCancel);
+    const outsideClickListener = (event) => {
+      if (!container.contains(event.target)) {
+        handleCancel();
+      }
+    };
 
-    // Listen for InputHandler custom events
-    if (window.inputHandler) {
-      const handleInputConfirm = (e) => {
-        if (e.detail.input === input) {
-          handleConfirm();
-          document.removeEventListener('inputconfirm', handleInputConfirm);
-        }
-      };
+    confirmBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleConfirm();
+    });
 
-      const handleInputCancel = (e) => {
-        if (e.detail.input === input) {
-          handleCancel();
-          document.removeEventListener('inputcancel', handleInputCancel);
-        }
-      };
-
-      document.addEventListener('inputconfirm', handleInputConfirm);
-      document.addEventListener('inputcancel', handleInputCancel);
-    }
+    cancelBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleCancel();
+    });
 
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        e.preventDefault();
         handleConfirm();
       } else if (e.key === 'Escape') {
-        e.preventDefault();
         handleCancel();
       }
     });
-
-    // Auto-cancel on blur after a delay
-    input.addEventListener('blur', () => {
-      setTimeout(() => {
-        if (document.activeElement !== confirmBtn && document.activeElement !== cancelBtn) {
-          handleCancel();
-        }
-      }, 100);
-    });
+    
+    setTimeout(() => {
+        document.addEventListener('click', outsideClickListener);
+    }, 0);
   }
 
   enterEditMode(playerIdx) {

@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Least Count - A premium card game scoring app with liquid glass design">
-    <meta name="keywords" content="card game, scoring, least count, mobile game">
-    <meta name="theme-color" content="#64D2FF">
+    <meta name="description" content="A minimal and clean card game scoring app.">
+    <meta name="keywords" content="card game, scoring, least count, minimal, monochrome">
+    <meta name="theme-color" content="#FFFFFF">
 
     <!-- iOS Specific Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Least Count">
     <meta name="format-detection" content="telephone=no">
 
@@ -19,9 +19,7 @@
     <link rel="apple-touch-icon" href="avatars/avatar.png">
 
     <title>Least Count</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
@@ -35,11 +33,7 @@
 </head>
 
 <body>
-    <div style="padding:16px; background:#fff;">
-      <label for="testInput">TEST INPUT:</label>
-      <input id="testInput" type="tel" inputmode="numeric" pattern="[0-9]*" style="font-size:16px;">
-    </div>
-    <div class="glass">
+    <div class="container">
         <h1>Least Count</h1>
         <div class="round-counter" id="roundCounter">Round 1</div>
         <div class="action-buttons">
@@ -48,11 +42,11 @@
             <button class="leaderboard-btn" id="leaderboardBtn" title="View Leaderboard">Scores</button>
             <button class="save-btn" id="saveBtn" title="Save Game">Save</button>
         </div>
-        <div class="glass-divider"></div>
+        <div class="divider"></div>
         <form class="add-player" id="addPlayerForm">
             <button type="button" id="showAddPlayerInput">Add Player</button>
         </form>
-        <div class="glass-divider"></div>
+        <div class="divider"></div>
         <div class="players" id="playersList"></div>
         <div class="round-controls">
             <button class="add-round-btn" id="addRoundBtn">Next Round</button>

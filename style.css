@@ -1,17 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* === MINIMAL MONOCHROME THEME === */
-/* Color Palette:
- * Background: #F8FAFC
- * Surface: #FFFFFF  
- * Borders: #E5E7EB
- * Primary text: #111827
- * Secondary text: #374151
- * Accent: #3B82F6
- * Success: #10B981
- * Error: #EF4444
- */
-
 :root {
     --bg-primary: #F8FAFC;
     --bg-surface: #FFFFFF;
@@ -25,16 +13,16 @@
     --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 html {
     height: 100%;
-    background: var(--bg-primary);
 }
 
 body {
@@ -46,86 +34,45 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0;
     padding: 20px;
-    position: relative;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling:
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-tap-highlight-color: transparent;
 }
 
-/* Container Styles */
 .container {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 0;
-}
-
-/* Main Glass Container -> Clean Card */
-.glass {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
     margin: 20px auto;
-    max-width: 95%;
-    width: 100%;
+    max-width: 600px;
+    width: 95%;
     box-shadow: var(--shadow-lg);
-    transition: box-shadow 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
 }
 
-.glass:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Typography */
 h1 {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-size: 2rem;
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 24px;
-    letter-spacing: -0.02em;
     text-align: center;
 }
 
 .round-counter {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--accent);
     text-align: center;
     margin-bottom: 24px;
     padding: 12px 20px;
-    background: var(--bg-surface);
+    background: var(--bg-primary);
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
 }
 
-/* Divider */
-.glass-divider {
+.divider {
     width: 100%;
     height: 1px;
     background: var(--border-color);
     margin: 20px 0;
-    border-radius: 1px;
-}
-
-/* Form and Add Player Styles */
-.add-player {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100
-    margin-bottom: 24px;
 }
 
 .add-player button {
@@ -135,31 +82,21 @@ h1 {
     border-radius: 8px;
     padding: 12px 24px;
     font-size: 1rem;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow);
+    transition: background-color 0.2s ease;
+    width: 100%;
 }
 
 .add-player button:hover {
     background: #2563eb;
-    /* transform: translateY(-1px); */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.add-player button:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow);
-}
-
-/* Players Grid */
 .players {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
     width: 100%;
-    justify-items: center;
 }
 
 @media (min-width: 700px) {
@@ -168,7 +105,6 @@ h1 {
     }
 }
 
-/* Player Card */
 .player {
     display: flex;
     align-items: center;
@@ -179,69 +115,46 @@ h1 {
     box-shadow: var(--shadow);
     border: 1px solid var(--border-color);
     position: relative;
-    transition: all 0.2s ease;
-    width: 100%;
 }
 
-.player:hover {
-    /* transform: translateY(-1px); */
-    box-shadow: var(--shadow-lg);
-    border-color: var(--accent);
-}
-
-/* Avatar */
 .avatar-ring {
     position: relative;
     width: 56px;
     height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-shrink: 0;
 }
 
 .avatar-ring img {
-    width: 48px;
-    height: 48px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--accent);
-    background: var(--bg-primary);
 }
 
 .avatar-progress {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 56px;
-    height: 56px;
+    top: -2px;
+    left: -2px;
+    width: 60px;
+    height: 60px;
     pointer-events: none;
+    transform: rotate(-90deg);
 }
 
-/* Player Info */
 .player-info {
-    flex: 1;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
 }
 
 .player-name {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-size: 1.125rem;
     font-weight: 600;
     color: var(--text-primary);
-    letter-spacing: -0.01em;
-    margin-bottom: 4px;
     cursor: pointer;
-    transition: color 0.2s ease;
 }
 
-.player-name:hover {
-    color: var(--accent);
-}
-
-/* Remove Player Button */
 .remove-player-btn {
     position: absolute;
     top: 8px;
@@ -259,8 +172,7 @@ h1 {
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow);
+    transition: opacity 0.2s ease;
 }
 
 .player:hover .remove-player-btn {
@@ -269,69 +181,40 @@ h1 {
 
 .remove-player-btn:hover {
     background: #dc2626;
-    transform: scale(1.1);
 }
 
-/* Simple Click-to-Add Container */
 .click-to-add-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  width: 100%;
-  max-width: 400px;
-  margin: 1rem auto;
-  box-sizing: border-box;
-  user-select: none;
-  text-align: center;
-  color: #333;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    margin-top: 1rem;
+    user-select: none;
+    text-align: center;
+    color: #333;
+    font-weight: 500;
 }
 
 .click-to-add-container:hover {
-  background-color: #f0f0f0;
+    background-color: #f0f0f0;
 }
 
-/* Score Display */
-.score-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+.click-to-add-container.input-active {
+    padding: 0;
+    background: transparent;
+    border: 1px solid transparent;
 }
 
-.player-score {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--accent);
+.click-to-add-container.input-active .click-to-add-text {
+    display: none;
 }
 
-.round-history {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.round-history-item {
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-}
-
-/* Score Input Overlay */
 .score-input-overlay {
     display: flex;
     align-items: center;
@@ -340,40 +223,34 @@ h1 {
     justify-content: center;
 }
 
-/* Basic Score Input Field */
 .score-input {
-  width: 68px;
-  padding: 6px 10px;
-  font-size: 1.2rem;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  border: 1px solid #aaa;
-  border-radius: 6px;
-  background-color: #fff;
-  color: #111;
-  outline: none;
-  box-sizing: border-box;
-  text-align: center;
-  transition: border-color 0.2s ease;
+    width: 80px;
+    padding: 8px 12px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #111;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .score-input:focus {
-  border-color: #3b82f6; /* subtle blue accent */
-  box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+    border-color: var(--accent);
+    box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
 }
 
-/* Score Buttons */
 .score-confirm-btn,
 .score-cancel-btn {
     border: none;
     border-radius: 6px;
     padding: 8px 12px;
-    font-size: 0.875rem;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow);
+    transition: background-color 0.2s ease;
 }
 
 .score-confirm-btn {
@@ -383,22 +260,17 @@ h1 {
 
 .score-confirm-btn:hover {
     background: #059669;
-    /* transform: translateY(-1px); */
 }
 
 .score-cancel-btn {
     background: var(--error);
     color: white;
-    padding: 8px 10px;
-    font-size: 1rem;
 }
 
 .score-cancel-btn:hover {
     background: #dc2626;
-    /* transform: translateY(-1px); */
 }
 
-/* Round Controls */
 .round-controls {
     width: 100%;
     margin-top: 24px;
@@ -411,31 +283,21 @@ h1 {
     border-radius: 8px;
     padding: 12px 24px;
     font-size: 1rem;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow);
+    transition: background-color 0.2s ease;
     width: 100%;
 }
 
 .add-round-btn:hover {
     background: #059669;
-    /* transform: translateY(-1px); */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.add-round-btn:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow);
-}
-
-/* Action Buttons */
 .action-buttons {
     display: flex;
     gap: 8px;
     width: 100%;
-    margin-top: 16px;
+    margin-bottom: 16px;
 }
 
 .action-buttons button {
@@ -446,20 +308,16 @@ h1 {
     border-radius: 6px;
     padding: 8px 16px;
     font-size: 0.875rem;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .action-buttons button:hover {
     background: var(--bg-primary);
     border-color: var(--accent);
-    /* transform: translateY(-1px); */
 }
 
-/* Edit Mode */
 .player.edit-mode {
     border-color: var(--accent);
     background: rgba(59, 130, 246, 0.05);
@@ -481,8 +339,6 @@ h1 {
     border-radius: 4px;
     text-align: center;
     font-size: 0.75rem;
-    background: var(--bg-surface);
-    color: var(--text-primary);
 }
 
 .round-edit-input:focus {
@@ -490,10 +346,8 @@ h1 {
     outline: none;
 }
 
-/* Out Player */
 .player.out {
     opacity: 0.6;
-    background: var(--bg-primary);
 }
 
 .player.out .player-name {
@@ -501,7 +355,6 @@ h1 {
     color: var(--text-secondary);
 }
 
-/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -511,12 +364,12 @@ h1 {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
 }
 
 .modal.show {
     display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .modal-dialog {
@@ -525,8 +378,7 @@ h1 {
     padding: 24px;
     max-width: 400px;
     width: 90%;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
 }
 
 .modal-header {
@@ -536,14 +388,11 @@ h1 {
 .modal-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-primary);
-    margin: 0;
 }
 
 .modal-body {
     margin-bottom: 24px;
     color: var(--text-secondary);
-    line-height: 1.5;
 }
 
 .modal-footer {
@@ -558,9 +407,7 @@ h1 {
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
     border: none;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 }
 
 .btn-primary {
@@ -582,82 +429,37 @@ h1 {
     background: var(--border-color);
 }
 
-/* Input Base Styles */
 input {
-    font-size: 16px !important;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    -webkit-appearance: none;
-    appearance: none;
+    font-size: 16px !important; /* for iOS zoom */
+    font-family: 'Inter', sans-serif;
     border-radius: 8px;
     padding: 12px 16px;
     background: var(--bg-surface);
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
     color: var(--text-primary);
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: var(--shadow);
-    -webkit-user-select: text;
-    user-select: text;
-    -webkit-touch-callout: default;
 }
 
 input:focus {
-    font-size: 16px !important;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    zoom: 1;
-    -webkit-transform: none;
-    transform: none;
-    position: relative;
-    z-index: 999;
 }
 
-/* Force input visibility and interaction for iOS keyboard fix */
-/* Temporarily disable overlays for testing */
-.click-to-add-container::before,
-.click-to-add-container:hover::before,
-.click-to-add-container:hover,
-.click-to-add-container:active {
-  all: unset !important;
-  pointer-events: auto !important;
-}
-
-.click-to-add-container.input-active .click-to-add-text {
-  display: none;
-}
-
-/* Responsive Design */
 @media (max-width: 600px) {
     body {
-        padding: 16px;
+        padding: 10px;
     }
-
-    .glass {
-        padding: 20px;
-        margin: 16px auto;
+    .container {
+        padding: 15px;
+        margin: 10px auto;
     }
-
     h1 {
         font-size: 1.75rem;
     }
-
     .player {
-        padding: 16px;
-        gap: 12px;
-    }
-
-    .avatar-ring {
-        width: 48px;
-        height: 48px;
-    }
-
-    .avatar-ring img {
-        width: 40px;
-        height: 40px;
-    }
-
-    .player-score {
-        font-size: 1.75rem;
+        padding: 15px;
+        gap: 10px;
     }
 }
 
@@ -665,32 +467,7 @@ input:focus {
     .players {
         grid-template-columns: 1fr;
     }
-
     .action-buttons {
         flex-direction: column;
-    }
-
-    .modal-dialog {
-        width: 95%;
-        padding: 20px;
-    }
-}
-
-/* Print Styles */
-@media print {
-    body {
-        background: white;
-        color: black;
-    }
-
-    .glass {
-        background: white;
-        border: 1px solid #ccc;
-        box-shadow: none;
-    }
-
-    .remove-player-btn,
-    .action-buttons {
-        display: none;
     }
 }
