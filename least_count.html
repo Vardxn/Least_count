@@ -365,6 +365,63 @@
             text-align: center;
         }
 
+        /* Sticky bottom action bar for iPhone */
+        .bottom-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom));
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .bottom-action-bar.visible {
+            transform: translateY(0);
+        }
+
+        .bottom-action-bar .next-round-btn {
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* Notification toast for round completion */
+        .notification-toast {
+            position: fixed;
+            top: calc(env(safe-area-inset-top, 20px) + 20px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+            max-width: calc(100vw - 40px);
+            text-align: center;
+        }
+
+        .notification-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Add bottom padding to main content for sticky bar */
+        .main-content {
+            padding-bottom: calc(100px + env(safe-area-inset-bottom));
+        }
+
         /* Enhanced player cards */
         .players-list {
             display: flex;
@@ -843,7 +900,7 @@
         /* iPhone-first responsive design */
         @media (max-width: 768px) {
             body {
-                padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 16px) env(safe-area-inset-left, 16px);
+                padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) calc(env(safe-area-inset-bottom, 16px) + 100px) env(safe-area-inset-left, 16px);
             }
 
             .app-title {
@@ -949,6 +1006,23 @@
                 padding: 14px 16px;
                 font-size: 15px;
             }
+
+            /* Hide regular next-round-section on mobile, use sticky bar instead */
+            .next-round-section {
+                display: none;
+            }
+
+            /* Show bottom action bar on mobile */
+            .bottom-action-bar {
+                display: block;
+            }
+        }
+
+        /* Desktop: hide bottom action bar */
+        @media (min-width: 769px) {
+            .bottom-action-bar {
+                display: none;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1016,6 +1090,16 @@
             .players-container {
                 -webkit-overflow-scrolling: touch;
                 will-change: scroll-position;
+            }
+
+            /* Keyboard open state handling */
+            .keyboard-open {
+                position: fixed;
+                width: 100%;
+            }
+
+            .keyboard-open .bottom-action-bar {
+                transform: translateY(100%);
             }
         }
 
@@ -1109,16 +1193,106 @@
         </div>
     </div>
 
+    <!-- Sticky bottom action bar for mobile -->
+    <div class="bottom-action-bar" id="bottomActionBar">
+        <button class="next-round-btn" id="mobileAddRoundBtn">Next Round</button>
+    </div>
+
+    <!-- Notification toast -->
+    <div class="notification-toast" id="notificationToast"></div>
+
     <script>
         // iPhone Safari optimizations
         document.addEventListener('DOMContentLoaded', function() {
+            let currentScrollPosition = 0;
+            let keyboardVisible = false;
+
             // Prevent iOS zoom on input focus
             const inputs = document.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
-                input.addEventListener('focus', function() {
+                input.addEventListener('focus', function(e) {
                     this.style.fontSize = '16px';
+                    
+                    // Store current scroll position when keyboard opens
+                    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                        currentScrollPosition = window.pageYOffset;
+                        keyboardVisible = true;
+                        document.body.classList.add('keyboard-open');
+                    }
+                });
+
+                input.addEventListener('blur', function(e) {
+                    // Handle keyboard dismissal on iPhone Safari
+                    if (/iPhone|iPad|iPod/.test(navigator.userAgent) && keyboardVisible) {
+                        keyboardVisible = false;
+                        document.body.classList.remove('keyboard-open');
+                        
+                        // Prevent auto-scroll to top by restoring position
+                        setTimeout(() => {
+                            if (currentScrollPosition > 0) {
+                                window.scrollTo(0, currentScrollPosition);
+                            }
+                            // Show bottom action bar if on mobile
+                            showBottomActionBar();
+                        }, 100);
+                    }
                 });
             });
+
+            // Function to show notification toast
+            function showNotification(message, duration = 3000) {
+                const toast = document.getElementById('notificationToast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+
+            // Function to show/hide bottom action bar
+            function showBottomActionBar() {
+                const bottomBar = document.getElementById('bottomActionBar');
+                const nextRoundBtn = document.getElementById('addRoundBtn');
+                
+                if (window.innerWidth <= 768 && nextRoundBtn && !nextRoundBtn.style.display === 'none') {
+                    bottomBar.classList.add('visible');
+                } else {
+                    bottomBar.classList.remove('visible');
+                }
+            }
+
+            // Handle mobile next round button
+            const mobileAddRoundBtn = document.getElementById('mobileAddRoundBtn');
+            const addRoundBtn = document.getElementById('addRoundBtn');
+            
+            if (mobileAddRoundBtn && addRoundBtn) {
+                mobileAddRoundBtn.addEventListener('click', function() {
+                    addRoundBtn.click();
+                    showNotification('Round completed! 🎉');
+                });
+            }
+
+            // Monitor for round completion and show notifications
+            const originalAddScore = window.addScore;
+            if (typeof originalAddScore === 'function') {
+                window.addScore = function(...args) {
+                    const result = originalAddScore.apply(this, args);
+                    
+                    // Check if round is complete after adding score
+                    setTimeout(() => {
+                        const allInputs = document.querySelectorAll('.score-input');
+                        const allFilled = Array.from(allInputs).every(input => input.value.trim() !== '');
+                        
+                        if (allFilled) {
+                            showNotification('Round complete! Ready for next round 🎯');
+                            showBottomActionBar();
+                        }
+                    }, 100);
+                    
+                    return result;
+                };
+            }
 
             // Enhance touch feedback for iPhone
             if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
@@ -1144,6 +1318,13 @@
                     }
                     lastTouchEnd = now;
                 }, false);
+
+                // Handle viewport changes for keyboard
+                window.addEventListener('resize', function() {
+                    if (!keyboardVisible) {
+                        showBottomActionBar();
+                    }
+                });
             }
 
             // Add PWA install prompt for iPhone Safari
@@ -1152,6 +1333,9 @@
                 e.preventDefault();
                 deferredPrompt = e;
             });
+
+            // Initial check for bottom action bar visibility
+            showBottomActionBar();
         });
     </script>
 </body>
