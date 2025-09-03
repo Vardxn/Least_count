@@ -127,6 +127,13 @@ class InputHandler {
       if (this.isInputElement(e.target)) {
         activeInput = e.target;
         this.handleInputFocus(e.target);
+        
+        // iOS specific: Force scroll and focus fix
+        if (this.isIOS) {
+          setTimeout(() => {
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 300);
+        }
       }
     });
 
@@ -507,8 +514,14 @@ class InputHandler {
    */
   createOptimizedInput(type = 'text', placeholder = '') {
     const input = document.createElement('input');
-    input.type = this.isIOS && type === 'number' ? 'tel' : type;
+    input.type = type;
     input.placeholder = placeholder;
+
+    // Add inputmode and pattern for numeric inputs
+    if (type === 'number') {
+      input.setAttribute('inputmode', 'numeric');
+      input.setAttribute('pattern', '[0-9]*');
+    }
 
     // Apply platform-specific attributes
     if (this.isIOS) {
