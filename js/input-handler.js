@@ -30,6 +30,7 @@ class InputHandler {
     // Force viewport re-render on input focus to trigger keyboard
     document.addEventListener('focusin', (e) => {
       if (this.isInputElement(e.target)) {
+        console.log('Input focused:', e.target);
         // Change viewport to force Safari to recalculate layout
         this.viewport.content = 'width=device-width, initial-scale=1.0';
       }

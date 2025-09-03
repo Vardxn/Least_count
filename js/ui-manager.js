@@ -223,6 +223,8 @@ class UIManager {
     input.setAttribute('min', '0');
     input.setAttribute('max', '50');
 
+    input.addEventListener('focus', () => console.log('Focus event on score input'));
+
     const confirmBtn = document.createElement('button');
     confirmBtn.className = 'score-confirm-btn';
     confirmBtn.textContent = 'Add';
