@@ -202,12 +202,18 @@ class UIManager {
     inputOverlay.className = 'score-input-overlay';
     
     const input = document.createElement('input');
-    input.type = 'number';
+    // Use 'tel' instead of 'number' for better iOS support
+    input.type = 'tel';
     input.className = 'score-input';
-    input.placeholder = 'Enter score';
-    input.min = '0';
-    input.max = '50';
+    input.placeholder = 'Score';
+    input.inputMode = 'numeric';
+    input.pattern = '[0-9]*';
     input.autocomplete = 'off';
+    input.autocorrect = 'off';
+    input.autocapitalize = 'off';
+    input.spellcheck = false;
+    input.setAttribute('min', '0');
+    input.setAttribute('max', '50');
     
     const confirmBtn = document.createElement('button');
     confirmBtn.className = 'score-confirm-btn';
@@ -229,20 +235,25 @@ class UIManager {
     container.appendChild(inputOverlay);
     container.classList.add('input-active');
     
-    // Focus input and select all
-    setTimeout(() => {
+    // Focus input with longer delay for iPhone and force focus
+    const focusInput = () => {
       input.focus();
-      input.select();
-    }, 50);
+      input.click(); // Additional trigger for iOS
+      setTimeout(() => {
+        input.focus();
+        input.select();
+      }, 100); // Additional delayed focus
+    };
     
-    const handleConfirm = () => {
+    // Try immediate focus and delayed focus
+    setTimeout(focusInput, 150); // Longer initial delay for iPhone    const handleConfirm = () => {
       const scoreToAdd = parseInt(input.value) || 0;
       if (scoreToAdd > 0) {
         // Add the score multiple times based on input
         for (let i = 0; i < scoreToAdd; i++) {
           this.gameLogic.updatePlayerScore(playerIdx, 'plus');
         }
-        
+
         // Show score change animation
         setTimeout(() => {
           const scoreElement = document.getElementById(`score_${playerIdx}`);
@@ -252,19 +263,19 @@ class UIManager {
           }
         }, 100);
       }
-      
+
       container.classList.remove('input-active');
       this.renderPlayers();
     };
-    
+
     const handleCancel = () => {
       container.innerHTML = originalContent;
       container.classList.remove('input-active');
     };
-    
+
     confirmBtn.addEventListener('click', handleConfirm);
     cancelBtn.addEventListener('click', handleCancel);
-    
+
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -274,7 +285,7 @@ class UIManager {
         handleCancel();
       }
     });
-    
+
     // Auto-cancel on blur after a delay
     input.addEventListener('blur', () => {
       setTimeout(() => {
