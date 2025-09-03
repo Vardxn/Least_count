@@ -27,16 +27,18 @@ class InputHandler {
   setupViewportHandling() {
     if (!this.isIOS) return;
 
-    // Prevent zoom on input focus
+    // Force viewport re-render on input focus to trigger keyboard
     document.addEventListener('focusin', (e) => {
       if (this.isInputElement(e.target)) {
-        this.disableViewportZoom();
+        // Change viewport to force Safari to recalculate layout
+        this.viewport.content = 'width=device-width, initial-scale=1.0';
       }
     });
 
     document.addEventListener('focusout', (e) => {
       if (this.isInputElement(e.target)) {
-        this.restoreViewportZoom();
+        // Restore full viewport settings
+        this.viewport.content = 'width=device-width, initial-scale=1.0, viewport-fit=cover';
       }
     });
 

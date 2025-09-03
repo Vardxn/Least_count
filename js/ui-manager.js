@@ -215,6 +215,7 @@ class UIManager {
     input.setAttribute('pattern', '[0-9]*');
     input.setAttribute('minlength', '1');
     input.setAttribute('maxlength', '3');
+    input.style.fontSize = '16px'; // Force 16px to allow zoom on focus
     input.autocomplete = 'off';
     input.autocorrect = 'off';
     input.autocapitalize = 'off';
@@ -367,6 +368,7 @@ class UIManager {
       input.setAttribute('pattern', '[0-9]*');
       input.setAttribute('minlength', '1');
       input.setAttribute('maxlength', '3');
+      input.style.fontSize = '16px'; // Force 16px to allow zoom on focus
 
       input.addEventListener('input', () => this.updateLiveTotalScore(playerIdx));
 
