@@ -6,9 +6,16 @@ class UIManager {
       playersList: document.getElementById('playersList'),
       roundCounter: document.getElementById('roundCounter'),
       undoBtn: document.getElementById('undoBtn'),
-      addPlayerForm: document.getElementById('addPlayerForm'),
+      eliminationScore: document.getElementById('eliminationScore'),
     };
     this.setupEventListeners();
+  }
+
+  getProgressColor(percentage) {
+    if (percentage <= 30) return '#10B981'; // Green
+    if (percentage <= 60) return '#F59E0B'; // Yellow
+    if (percentage <= 85) return '#F97316'; // Orange
+    return '#EF4444'; // Red
   }
 
   setupEventListeners() {
@@ -18,6 +25,17 @@ class UIManager {
     document.getElementById('resetBtn').addEventListener('click', () => this.handleReset());
     document.getElementById('leaderboardBtn').addEventListener('click', () => this.showLeaderboard());
     document.getElementById('saveBtn').addEventListener('click', () => this.handleSave());
+    
+    // Handle elimination score changes
+    if (this.elements.eliminationScore) {
+      this.elements.eliminationScore.addEventListener('input', (e) => {
+        const newScore = parseInt(e.target.value, 10);
+        if (!isNaN(newScore) && newScore >= 50 && newScore <= 500) {
+          this.gameLogic.updateEliminationScore(newScore);
+          this.renderPlayers(); // Re-render to update elimination status and displays
+        }
+      });
+    }
   }
 
   showAddPlayerPrompt() {
@@ -26,12 +44,13 @@ class UIManager {
       promptDiv = document.createElement('div');
       promptDiv.id = 'addPlayerPrompt';
       promptDiv.style.marginTop = '1em';
+      promptDiv.style.textAlign = 'center';
       promptDiv.innerHTML = `
-                <input type="text" id="playerName" placeholder="Player Name">
-                <button id="confirmAddPlayer">Add</button>
-                <button id="cancelAddPlayer">Cancel</button>
+                <input type="text" id="playerName" placeholder="Player Name" style="padding: 10px; margin: 5px; border-radius: 6px; border: 1px solid #d1d5db;">
+                <button id="confirmAddPlayer" style="padding: 10px 20px; margin: 5px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">Add</button>
+                <button id="cancelAddPlayer" style="padding: 10px 20px; margin: 5px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">Cancel</button>
             `;
-      this.elements.addPlayerForm.appendChild(promptDiv);
+      document.querySelector('.landing-container').appendChild(promptDiv);
 
       document.getElementById('playerName').focus();
 
@@ -57,221 +76,247 @@ class UIManager {
 
     this.gameLogic.players.forEach((player, idx) => {
       const div = document.createElement('div');
-      div.className = 'player' + (player.out ? ' out' : ' highlight');
+      div.className = `player-card${player.out ? ' eliminated' : ''}`;
 
+      const scoreInputHTML = `
+        <input type="tel" class="score-input" data-idx="${idx}" placeholder="Enter score" value="${player.count > 0 ? player.count : ''}" ${player.out ? 'disabled' : ''} inputmode="numeric" pattern="[0-9]*">
+        <button class="add-score-btn" data-idx="${idx}" ${player.out ? 'disabled' : ''}>Add</button>
+      `;
+
+      // Generate round history HTML
+      const roundHistoryHTML = player.roundHistory.length > 0 ? `
+        <div class="round-history-container">
+          <button class="toggle-history-btn" data-idx="${idx}">
+            <span class="history-icon">📊</span> View Previous Rounds
+          </button>
+          <div class="round-history-content" id="history-${idx}" style="display: none;">
+            <div class="round-history-header">
+              <h4>Round History</h4>
+              <button class="edit-history-btn" data-idx="${idx}">Edit Scores</button>
+            </div>
+            <div class="round-history-list">
+              ${player.roundHistory.map((score, roundIdx) => `
+                <div class="round-item" data-player="${idx}" data-round="${roundIdx}">
+                  <span class="round-label">R${roundIdx + 1}:</span>
+                  <span class="round-score" data-original="${score}">${score}</span>
+                  <input type="number" class="round-edit-input" value="${score}" style="display: none;" min="0" max="200">
+                </div>
+              `).join('')}
+            </div>
+            <div class="edit-controls" style="display: none;">
+              <button class="save-history-btn" data-idx="${idx}">Save Changes</button>
+              <button class="cancel-history-btn" data-idx="${idx}">Cancel</button>
+            </div>
+          </div>
+        </div>
+      ` : '';
+
+      const eliminatedLabel = player.out ? '<div class="eliminated-label">❌ Eliminated</div>' : '';
+
+      // Create progress ring for avatar
+      const progressPercentage = Math.min((player.totalScore / this.gameLogic.eliminationScore) * 100, 100);
+      const strokeColor = this.getProgressColor(progressPercentage);
       const circumference = 2 * Math.PI * 26;
-      const progress = Math.min(player.totalScore, this.gameLogic.eliminationScore);
-      const offset = circumference * (1 - progress / this.gameLogic.eliminationScore);
+      const strokeDashoffset = circumference - (progressPercentage / 100) * circumference;
 
       const progressRing = `
-                <svg class="avatar-progress" width="56" height="56">
-                    <circle cx="28" cy="28" r="26" stroke="#e0eafc" stroke-width="4" fill="none"/>
-                    <circle cx="28" cy="28" r="26" stroke="${this.gameLogic.getProgressColor(player.totalScore)}" 
-                            stroke-width="4" fill="none" stroke-dasharray="${circumference}" 
-                            stroke-dashoffset="${offset}"/>
-                </svg>
-            `;
-
-      const lastScore = player.roundHistory.length > 0 ? player.roundHistory[player.roundHistory.length - 1] : null;
-      const lastRoundLabel = `R${this.gameLogic.currentRound - 1}`;
-      const lastRoundInfo = lastScore !== null && this.gameLogic.currentRound > 1 ? `<div class="previous-round-info">${lastRoundLabel} Score: <strong>${lastScore}</strong></div>` : '';
-
-      const roundHistoryHtml =
-        player.roundHistory.length > 0
-          ? `<div class="round-history-label">All Rounds:</div>` +
-            player.roundHistory
-              .map((score, roundNum) => {
-                const roundLabelText = roundNum === 0 ? 'Round 1' : `R${roundNum + 1}`;
-                return `<div class="round-history-item" data-round="${roundNum}">${roundLabelText}: ${score}</div>`;
-              })
-              .join('')
-          : '';
+        <div class="avatar-container">
+          <svg class="progress-ring" width="66" height="66">
+            <circle cx="33" cy="33" r="26" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"/>
+            <circle cx="33" cy="33" r="26" stroke="${strokeColor}" stroke-width="3" fill="none" 
+                    stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
+                    stroke-linecap="round" transform="rotate(-90 33 33)"
+                    style="transition: stroke-dashoffset 0.5s ease, stroke 0.5s ease"/>
+          </svg>
+          <img src="${player.picUrl}" alt="${player.name}" class="player-avatar">
+        </div>
+      `;
 
       div.innerHTML = `
-                <button class="remove-player-btn" data-idx="${idx}">×</button>
-                <button class="edit-player-btn" data-idx="${idx}" title="Edit Scores">Edit</button>
-                <div class="avatar-ring">
-                    <img src="${player.picUrl}" alt="Profile">
-                    ${progressRing}
-                </div>
-                <div class="player-info">
-                    <div class="player-name" data-idx="${idx}">${player.name}</div>
-                    <div class="player-total-display">
-                        Total Score: <span class="total-score-value" data-idx="${idx}">${player.totalScore}</span>
-                    </div>
-                    <div class="click-to-add-container" data-idx="${idx}" ${player.out ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
-                        <div class="click-to-add-text">Add Score for R${this.gameLogic.currentRound}</div>
-                    </div>
-                    ${lastRoundInfo}
-                    <div class="round-history">${roundHistoryHtml}</div>
-                </div>
-                <div class="edit-controls">
-                    <button class="save-edit-btn" data-idx="${idx}">Save</button>
-                    <button class="cancel-edit-btn" data-idx="${idx}">Cancel</button>
-                </div>
-            `;
+        <div class="player-header">
+          ${progressRing}
+          <div class="player-info">
+            <span class="player-name">${player.name}</span>
+            ${eliminatedLabel}
+          </div>
+        </div>
+        <div class="player-scoring">
+          ${scoreInputHTML}
+          <div class="total-score">Total: ${player.totalScore}/${this.gameLogic.eliminationScore}</div>
+        </div>
+        ${roundHistoryHTML}
+      `;
 
       this.elements.playersList.appendChild(div);
     });
 
     this.setupPlayerEventListeners();
+    this.setupHistoryEventListeners();
     this.updateRoundCounter();
   }
 
   setupPlayerEventListeners() {
-    document.querySelectorAll('.remove-player-btn').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const idx = parseInt(btn.getAttribute('data-idx'));
-        if (this.gameLogic.removePlayer(idx)) {
-          this.renderPlayers();
-        } else {
-          modalManager.showWarning('Minimum Players Required', 'You need at least 2 players to play!');
+    // Handle score input changes
+    document.querySelectorAll('.score-input').forEach((input) => {
+      input.addEventListener('input', (e) => {
+        const idx = parseInt(e.target.getAttribute('data-idx'));
+        const score = parseInt(e.target.value, 10) || 0;
+        if (!isNaN(idx)) {
+          this.gameLogic.updatePlayerScore(idx, score);
+          // Update the total score display immediately
+          const totalScoreEl = e.target.parentElement.querySelector('.total-score');
+          if (totalScoreEl) {
+            const player = this.gameLogic.players[idx];
+            totalScoreEl.textContent = `Total: ${player.totalScore + score}/${this.gameLogic.eliminationScore}`;
+          }
         }
       });
     });
 
-    document.querySelectorAll('.edit-player-btn').forEach((btn) => {
+    // Handle add score button clicks
+    document.querySelectorAll('.add-score-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
-        e.stopPropagation();
         const idx = parseInt(btn.getAttribute('data-idx'));
-        this.enterEditMode(idx);
-      });
-    });
-
-    document.querySelectorAll('.save-edit-btn').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const idx = parseInt(btn.getAttribute('data-idx'));
-        this.saveEditMode(idx);
-      });
-    });
-
-    document.querySelectorAll('.cancel-edit-btn').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const idx = parseInt(btn.getAttribute('data-idx'));
-        this.cancelEditMode(idx);
-      });
-    });
-
-    document.querySelectorAll('.click-to-add-container').forEach((container) => {
-      container.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const idx = parseInt(container.getAttribute('data-idx'));
-        if (!this.gameLogic.players[idx].out) {
-          this.showScoreInput(idx, container);
+        const scoreInput = document.querySelector(`.score-input[data-idx="${idx}"]`);
+        const score = parseInt(scoreInput.value, 10);
+        
+        if (!isNaN(score) && score >= 0) {
+          this.gameLogic.updatePlayerScore(idx, score);
+          scoreInput.value = '';
+          this.renderPlayers();
         }
       });
     });
 
-    document.querySelectorAll('.player-name').forEach((nameDiv) => {
-      nameDiv.addEventListener('click', () => {
-        const idx = parseInt(nameDiv.getAttribute('data-idx'));
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = this.gameLogic.players[idx].name;
-        input.className = 'player-name-input';
-        nameDiv.replaceWith(input);
-        input.focus();
-
-        input.addEventListener('blur', () => {
-          const newName = input.value.trim() || this.gameLogic.players[idx].name;
-          this.gameLogic.players[idx].name = newName;
-          this.renderPlayers();
-        });
-
-        input.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') input.blur();
-        });
+    // Handle enter key in score inputs
+    document.querySelectorAll('.score-input').forEach((input) => {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const idx = parseInt(input.getAttribute('data-idx'));
+          const addBtn = document.querySelector(`.add-score-btn[data-idx="${idx}"]`);
+          if (addBtn) addBtn.click();
+        }
       });
     });
   }
 
-  showScoreInput(playerIdx, container) {
-    // If input is already shown, do nothing
-    if (container.classList.contains('input-active')) {
-      return;
+  setupHistoryEventListeners() {
+    // Toggle history visibility
+    document.querySelectorAll('.toggle-history-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.getAttribute('data-idx'));
+        const historyContent = document.getElementById(`history-${idx}`);
+        const isVisible = historyContent.style.display !== 'none';
+        
+        historyContent.style.display = isVisible ? 'none' : 'block';
+        btn.innerHTML = isVisible ? 
+          '<span class="history-icon">📊</span> View Previous Rounds' : 
+          '<span class="history-icon">📊</span> Hide Previous Rounds';
+      });
+    });
+
+    // Edit history mode
+    document.querySelectorAll('.edit-history-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.getAttribute('data-idx'));
+        this.enterHistoryEditMode(idx);
+      });
+    });
+
+    // Save history changes
+    document.querySelectorAll('.save-history-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.getAttribute('data-idx'));
+        this.saveHistoryChanges(idx);
+      });
+    });
+
+    // Cancel history editing
+    document.querySelectorAll('.cancel-history-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.getAttribute('data-idx'));
+        this.cancelHistoryEdit(idx);
+      });
+    });
+  }
+
+  enterHistoryEditMode(playerIdx) {
+    const historyContent = document.getElementById(`history-${playerIdx}`);
+    const roundItems = historyContent.querySelectorAll('.round-item');
+    const editControls = historyContent.querySelector('.edit-controls');
+    const editBtn = historyContent.querySelector('.edit-history-btn');
+
+    // Show edit controls and hide edit button
+    editControls.style.display = 'flex';
+    editBtn.style.display = 'none';
+
+    // Show input fields and hide display values
+    roundItems.forEach((item) => {
+      const scoreSpan = item.querySelector('.round-score');
+      const scoreInput = item.querySelector('.round-edit-input');
+      scoreSpan.style.display = 'none';
+      scoreInput.style.display = 'inline-block';
+    });
+  }
+
+  saveHistoryChanges(playerIdx) {
+    const historyContent = document.getElementById(`history-${playerIdx}`);
+    const roundItems = historyContent.querySelectorAll('.round-item');
+    const player = this.gameLogic.players[playerIdx];
+    
+    // Save the current state for undo functionality
+    this.gameLogic.saveGameState();
+
+    let hasChanges = false;
+    roundItems.forEach((item, roundIdx) => {
+      const scoreInput = item.querySelector('.round-edit-input');
+      const newScore = parseInt(scoreInput.value, 10) || 0;
+      const oldScore = player.roundHistory[roundIdx];
+      
+      if (newScore !== oldScore) {
+        player.roundHistory[roundIdx] = newScore;
+        hasChanges = true;
+      }
+    });
+
+    if (hasChanges) {
+      // Use the new game logic method to recalculate and check elimination
+      this.gameLogic.recalculatePlayerTotal(playerIdx);
     }
 
-    const originalText = container.querySelector('.click-to-add-text');
-    if (originalText) originalText.style.display = 'none';
-
-    // Create input overlay
-    const inputOverlay = document.createElement('div');
-    inputOverlay.className = 'score-input-overlay';
-
-    const input = document.createElement('input');
-    input.type = 'tel';
-    input.className = 'score-input';
-    input.setAttribute('inputmode', 'numeric');
-    input.setAttribute('pattern', '[0-9]*');
-    input.style.fontSize = '16px'; // iOS zoom fix
-
-    const confirmBtn = document.createElement('button');
-    confirmBtn.className = 'score-confirm-btn';
-    confirmBtn.textContent = 'Add';
-
-    const cancelBtn = document.createElement('button');
-    cancelBtn.className = 'score-cancel-btn';
-    cancelBtn.textContent = '×';
-
-    inputOverlay.appendChild(input);
-    inputOverlay.appendChild(confirmBtn);
-    inputOverlay.appendChild(cancelBtn);
-
-    container.appendChild(inputOverlay);
-    container.classList.add('input-active');
-    input.focus();
-
-    const cleanup = () => {
-      container.classList.remove('input-active');
-      inputOverlay.remove();
-      if (originalText) originalText.style.display = 'block';
-      document.removeEventListener('click', outsideClickListener);
-    };
-
-    const handleConfirm = () => {
-      const scoreToAdd = parseInt(input.value) || 0;
-      if (scoreToAdd > 0) {
-        this.gameLogic.updatePlayerScore(playerIdx, scoreToAdd);
-      }
-      cleanup();
-      this.renderPlayers();
-    };
-
-    const handleCancel = () => {
-      cleanup();
-    };
-
-    const outsideClickListener = (event) => {
-      if (!container.contains(event.target)) {
-        handleCancel();
-      }
-    };
-
-    confirmBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      handleConfirm();
-    });
-
-    cancelBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      handleCancel();
-    });
-
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        handleConfirm();
-      } else if (e.key === 'Escape') {
-        handleCancel();
-      }
-    });
-
-    setTimeout(() => {
-      document.addEventListener('click', outsideClickListener);
-    }, 0);
+    this.exitHistoryEditMode(playerIdx);
+    this.renderPlayers();
   }
+
+  cancelHistoryEdit(playerIdx) {
+    this.exitHistoryEditMode(playerIdx);
+  }
+
+  exitHistoryEditMode(playerIdx) {
+    const historyContent = document.getElementById(`history-${playerIdx}`);
+    const roundItems = historyContent.querySelectorAll('.round-item');
+    const editControls = historyContent.querySelector('.edit-controls');
+    const editBtn = historyContent.querySelector('.edit-history-btn');
+
+    // Hide edit controls and show edit button
+    editControls.style.display = 'none';
+    editBtn.style.display = 'inline-block';
+
+    // Hide input fields and show display values
+    roundItems.forEach((item) => {
+      const scoreSpan = item.querySelector('.round-score');
+      const scoreInput = item.querySelector('.round-edit-input');
+      const originalScore = scoreSpan.getAttribute('data-original');
+      
+      scoreSpan.style.display = 'inline';
+      scoreInput.style.display = 'none';
+      scoreInput.value = originalScore; // Reset to original value if cancelled
+    });
+  }
+
+  // This function is no longer needed with persistent input fields
+  // showScoreInput(playerIdx, container) { ... }
+
 
   enterEditMode(playerIdx) {
     this.editModeData[playerIdx] = {

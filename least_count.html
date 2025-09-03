@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="A minimal and clean card game scoring app.">
-    <meta name="keywords" content="card game, scoring, least count, minimal, monochrome">
-    <meta name="theme-color" content="#000000">
+    <meta name="keywords" content="card game, scoring, least count, minimal, modern">
+    <meta name="theme-color" content="#1a1a1a">
 
     <!-- iOS Specific Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,10 +19,897 @@
     <link rel="apple-touch-icon" href="avatars/avatar.png">
 
     <title>Least Count</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #121212;
+            --bg-surface: #1a1a1a;
+            --bg-card: #222222;
+            
+            --text-primary: #E0E0E0;
+            --text-secondary: #A0A0A0;
+            --text-muted: #666666;
+            
+            --accent-blue: #3B82F6;
+            --accent-blue-light: #60A5FA;
+            --accent-blue-dark: #1E40AF;
+            --accent-neon: #00D4FF;
+            
+            --success: #10B981;
+            --success-light: #34D399;
+            --error: #EF4444;
+            --error-light: #F87171;
+            --warning: #F59E0B;
+            
+            --gradient-blue: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+            --gradient-card: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%);
+            --gradient-surface: linear-gradient(145deg, #121212 0%, #1f1f1f 100%);
+            
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.8);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.9);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.9);
+            --shadow-blue: 0 0 20px rgba(59, 130, 246, 0.3);
+            --shadow-neon: 0 0 30px rgba(0, 212, 255, 0.4);
+            
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            letter-spacing: 0.01em;
+            padding: 20px;
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Main container for landing page */
+        .landing-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* Welcome box and player info card */
+        .welcome-box,
+        .player-info-card {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-lg), var(--shadow-blue);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .welcome-box:hover,
+        .player-info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), var(--shadow-neon);
+        }
+
+        /* Adjust size */
+        .welcome-box {
+            flex: 1 1 350px;
+            min-width: 280px;
+            text-align: center;
+        }
+
+        .welcome-box h2 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-box p {
+            color: var(--text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+
+        .player-info-card {
+            flex: 1 1 350px;
+            min-width: 280px;
+        }
+
+        .player-info-card h3 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent-neon);
+        }
+
+        .player-info-card ul {
+            color: var(--text-secondary);
+        }
+
+        .player-info-card li {
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        /* Enhanced header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 2rem;
+            background: var(--gradient-surface);
+            border-radius: var(--border-radius-xl);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .app-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-neon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .round-info {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            letter-spacing: 0.01em;
+            padding: 12px 24px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            display: inline-block;
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 12px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .nav-btn {
+            min-width: 44px;
+            min-height: 44px;
+            padding: 12px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--gradient-card);
+            color: var(--text-primary);
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.01em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            background: var(--gradient-blue);
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-blue);
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0) scale(1);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Enhanced elimination settings */
+        .elimination-settings {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            margin-bottom: 32px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .elimination-settings:hover {
+            box-shadow: var(--shadow-lg), var(--shadow-blue);
+        }
+
+        .elimination-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .elimination-input {
+            min-width: 44px;
+            min-height: 44px;
+            width: 100px;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.01em;
+        }
+
+        .elimination-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), var(--shadow-blue);
+            background: var(--bg-card);
+        }
+
+        .elimination-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 0.01em;
+        }
+
+        /* Enhanced buttons */
+        .add-player-btn, .next-round-btn {
+            min-width: 44px;
+            min-height: 44px;
+            padding: 14px 28px;
+            background: var(--gradient-blue);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+            letter-spacing: 0.01em;
+        }
+
+        .add-player-btn:hover, .next-round-btn:hover {
+            background: linear-gradient(135deg, var(--accent-blue-light) 0%, var(--accent-blue) 100%);
+            box-shadow: var(--shadow-lg), var(--shadow-blue);
+            transform: translateY(-2px);
+        }
+
+        .add-player-btn:active, .next-round-btn:active {
+            transform: translateY(0);
+        }
+
+        .add-player-section, .next-round-section {
+            margin: 32px 0;
+            text-align: center;
+        }
+
+        /* Enhanced player cards */
+        .players-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .player-card {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-blue);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .player-card:hover {
+            box-shadow: var(--shadow-lg), var(--shadow-blue);
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .player-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Player card elimination styles */
+        .player-card.eliminated {
+            opacity: 0.6;
+            background: linear-gradient(145deg, #2a1a1a 0%, #1a1a1a 100%);
+            border-color: rgba(239, 68, 68, 0.3);
+            transform: scale(0.98);
+        }
+
+        .player-card.eliminated::before {
+            background: linear-gradient(90deg, var(--error) 0%, var(--error-light) 100%);
+            opacity: 0.8;
+        }
+
+        .eliminated-label {
+            background: var(--gradient-blue);
+            background: linear-gradient(135deg, var(--error) 0%, var(--error-light) 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: var(--border-radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: auto;
+            box-shadow: var(--shadow-sm);
+            letter-spacing: 0.02em;
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        /* Enhanced avatar with progress ring */
+        .avatar-container {
+            position: relative;
+            margin-right: 20px;
+        }
+
+        .progress-ring {
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            transform: rotate(-90deg);
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
+        }
+
+        .player-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--bg-card);
+            box-shadow: var(--shadow-md), 0 0 15px rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .player-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg), var(--shadow-neon);
+        }
+
+        .player-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .player-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.01em;
+        }
+
+        .player-scoring {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .score-input {
+            flex: 1;
+            min-width: 120px;
+            min-height: 44px;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-md);
+            font-size: 16px;
+            font-weight: 500;
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.01em;
+        }
+
+        .score-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), var(--shadow-blue);
+            background: var(--bg-card);
+        }
+
+        .score-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .add-score-btn {
+            min-width: 44px;
+            min-height: 44px;
+            padding: 12px 20px;
+            background: var(--gradient-blue);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+            letter-spacing: 0.01em;
+        }
+
+        .add-score-btn:hover {
+            background: linear-gradient(135deg, var(--success-light) 0%, var(--success) 100%);
+            box-shadow: var(--shadow-md), 0 0 15px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .add-score-btn:active {
+            transform: translateY(0);
+        }
+
+        .total-score {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-left: auto;
+            white-space: nowrap;
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            letter-spacing: 0.01em;
+        }
+
+        /* Enhanced Round history styles */
+        .round-history-container {
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        .toggle-history-btn {
+            min-width: 44px;
+            min-height: 44px;
+            background: var(--gradient-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-md);
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            text-align: left;
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.01em;
+        }
+
+        .toggle-history-btn:hover {
+            background: var(--gradient-blue);
+            box-shadow: var(--shadow-blue);
+            transform: translateY(-1px);
+        }
+
+        .history-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .round-history-content {
+            margin-top: 16px;
+            padding: 20px;
+            background: var(--gradient-surface);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .round-history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .round-history-header h4 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.01em;
+        }
+
+        .edit-history-btn {
+            min-width: 44px;
+            min-height: 44px;
+            background: var(--gradient-blue);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+            letter-spacing: 0.01em;
+        }
+
+        .edit-history-btn:hover {
+            background: linear-gradient(135deg, var(--accent-neon) 0%, var(--accent-blue) 100%);
+            box-shadow: var(--shadow-neon);
+            transform: translateY(-1px);
+        }
+
+        .round-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .round-item:last-child {
+            border-bottom: none;
+        }
+
+        .round-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: var(--border-radius-sm);
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .round-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            min-width: 50px;
+            letter-spacing: 0.01em;
+        }
+
+        .round-score {
+            font-weight: 600;
+            color: var(--text-primary);
+            padding: 4px 8px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: var(--border-radius-sm);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .round-edit-input {
+            min-width: 44px;
+            min-height: 44px;
+            width: 80px;
+            padding: 8px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .round-edit-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2), var(--shadow-blue);
+            background: var(--bg-card);
+        }
+
+        .edit-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            justify-content: flex-end;
+        }
+
+        .save-history-btn, .cancel-history-btn {
+            min-width: 44px;
+            min-height: 44px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.01em;
+        }
+
+        .save-history-btn {
+            background: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .save-history-btn:hover {
+            box-shadow: var(--shadow-md), 0 0 15px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .cancel-history-btn {
+            background: var(--gradient-card);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cancel-history-btn:hover {
+            background: linear-gradient(135deg, var(--text-muted) 0%, var(--text-secondary) 100%);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        /* Animations and microinteractions */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .player-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .eliminated-label {
+            animation: pulse 2s infinite;
+        }
+
+        .round-history-content {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .app-title {
+                font-size: 2.5rem;
+            }
+
+            .header {
+                padding: 1.5rem;
+                margin-bottom: 24px;
+            }
+
+            .landing-container {
+                flex-direction: column;
+                gap: 1.5rem;
+                margin: 1.5rem auto;
+            }
+
+            .welcome-box, .player-info-card {
+                min-width: unset;
+                padding: 1.5rem;
+            }
+
+            .nav-buttons {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                max-width: 280px;
+            }
+
+            .nav-btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .player-scoring {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            
+            .total-score {
+                margin-left: 0;
+                text-align: center;
+                order: -1;
+            }
+
+            .score-input {
+                min-width: unset;
+            }
+
+            .elimination-control {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .players-list {
+                gap: 16px;
+            }
+
+            .player-card {
+                padding: 20px;
+            }
+
+            .player-header {
+                margin-bottom: 16px;
+            }
+
+            .round-history-content {
+                padding: 16px;
+            }
+
+            .edit-controls {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .save-history-btn, .cancel-history-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-title {
+                font-size: 2rem;
+            }
+
+            .avatar-container {
+                margin-right: 16px;
+            }
+
+            .player-avatar {
+                width: 50px;
+                height: 50px;
+            }
+
+            .progress-ring {
+                width: 56px;
+                height: 56px;
+            }
+
+            .progress-ring circle {
+                r: 22;
+                cx: 28;
+                cy: 28;
+            }
+
+            .player-name {
+                font-size: 1.1rem;
+            }
+
+            .welcome-box, .player-info-card {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .elimination-settings {
+                padding: 16px;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --bg-primary: #000000;
+                --bg-surface: #000000;
+                --bg-card: #1a1a1a;
+                --text-primary: #ffffff;
+                --text-secondary: #ffffff;
+                --accent-blue: #00aaff;
+                --border-color: #ffffff;
+            }
+
+            .player-card, .welcome-box, .player-info-card {
+                border: 2px solid var(--text-primary);
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .player-card, .welcome-box:hover, .player-info-card:hover {
+                transform: none !important;
+            }
+        }
+    </style>
+    <!-- Debug tools - commented out for production -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script> -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="database.js"></script>
     <script src="js/game-logic.js"></script>
@@ -32,23 +919,51 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>Least Count</h1>
-        <div class="round-counter" id="roundCounter">Round 1</div>
-        <div class="action-buttons">
-            <button class="undo-btn" id="undoBtn" title="Undo Last Action" disabled>Undo</button>
-            <button class="reset-btn" id="resetBtn" title="Reset Game">Reset</button>
-            <button class="leaderboard-btn" id="leaderboardBtn" title="View Leaderboard">Scores</button>
-            <button class="save-btn" id="saveBtn" title="Save Game">Save</button>
+    <div class="app-container">
+        <header class="header">
+            <h1 class="app-title">Least Count</h1>
+            <div class="round-info" id="roundCounter">Round 1</div>
+            <div class="nav-buttons">
+                <button class="nav-btn" id="undoBtn" disabled>Undo</button>
+                <button class="nav-btn" id="resetBtn">Reset</button>
+                <button class="nav-btn" id="leaderboardBtn">Scores</button>
+                <button class="nav-btn" id="saveBtn">Save</button>
+            </div>
+        </header>
+
+        <!-- Elimination Settings -->
+        <div class="elimination-settings">
+            <div class="elimination-control">
+                <span class="elimination-label">Player elimination at</span>
+                <input type="number" class="elimination-input" id="eliminationScore" value="100" min="50" max="500" step="10">
+                <span class="elimination-label">points</span>
+            </div>
         </div>
-        <div class="divider"></div>
-        <form class="add-player" id="addPlayerForm">
-            <button type="button" id="showAddPlayerInput">Add Player</button>
-        </form>
-        <div class="divider"></div>
-        <div class="players" id="playersList"></div>
-        <div class="round-controls">
-            <button class="add-round-btn" id="addRoundBtn">Next Round</button>
+
+        <div class="landing-container">
+            <div class="welcome-box">
+                <h2>Welcome to Least Count</h2>
+                <p>A clean and minimal card game scoring app</p>
+                <button class="add-player-btn" id="showAddPlayerInput">Add Player</button>
+            </div>
+
+            <div class="player-info-card">
+                <h3>How to Play</h3>
+                <ul style="text-align: left; margin-top: 1rem;">
+                    <li>Add players to start the game</li>
+                    <li>Enter scores for each round</li>
+                    <li>Players are eliminated when they reach the elimination score</li>
+                    <li>Last player standing wins!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="players-list" id="playersList">
+            <!-- Players will be dynamically added here -->
+        </div>
+
+        <div class="next-round-section">
+            <button class="next-round-btn" id="addRoundBtn">Next Round</button>
         </div>
     </div>
 </body>

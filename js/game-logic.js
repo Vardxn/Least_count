@@ -1,10 +1,10 @@
 class GameLogic {
   constructor() {
     this.players = [
-      { name: 'Player 1', picUrl: 'avatars/avatars.png', count: 0, totalScore: 0, roundHistory: [], out: false },
-      { name: 'Player 2', picUrl: 'avatars/boy.png', count: 0, totalScore: 0, roundHistory: [], out: false },
-      { name: 'Player 3', picUrl: 'avatars/male-cartoon.png', count: 0, totalScore: 0, roundHistory: [], out: false },
-      { name: 'Player 4', picUrl: 'avatars/male.png', count: 0, totalScore: 0, roundHistory: [], out: false },
+      { name: 'Player 1', picUrl: 'avatars/avatars.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
+      { name: 'Player 2', picUrl: 'avatars/boy.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
+      { name: 'Player 3', picUrl: 'avatars/male-cartoon.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
+      { name: 'Player 4', picUrl: 'avatars/male.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
     ];
     this.currentRound = 1;
     this.gameHistory = [];
@@ -23,6 +23,7 @@ class GameLogic {
       totalScore: 0,
       roundHistory: [],
       out: false,
+      hasScoredThisRound: false,
     });
   }
 
@@ -37,9 +38,33 @@ class GameLogic {
 
   updatePlayerScore(playerIndex, score) {
     if (this.players[playerIndex].out) return;
+    // This function now SETS the score for the round, not adds to it.
+    this.players[playerIndex].count = score;
+    this.players[playerIndex].hasScoredThisRound = score > 0;
+  }
 
-    this.saveGameState();
-    this.players[playerIndex].count += score;
+  updateEliminationScore(newScore) {
+    this.eliminationScore = newScore;
+    // Re-check elimination status for all players
+    this.players.forEach((player) => {
+      if (player.totalScore >= this.eliminationScore && !player.out) {
+        player.out = true;
+      } else if (player.totalScore < this.eliminationScore && player.out) {
+        player.out = false;
+      }
+    });
+  }
+
+  recalculatePlayerTotal(playerIndex) {
+    const player = this.players[playerIndex];
+    player.totalScore = player.roundHistory.reduce((sum, score) => sum + score, 0);
+    
+    // Check elimination status
+    if (player.totalScore >= this.eliminationScore && !player.out) {
+      player.out = true;
+    } else if (player.totalScore < this.eliminationScore && player.out) {
+      player.out = false;
+    }
   }
 
   completeRound() {
@@ -59,6 +84,7 @@ class GameLogic {
       }
 
       player.count = 0;
+      player.hasScoredThisRound = false;
     });
 
     this.currentRound++;
@@ -71,6 +97,7 @@ class GameLogic {
       player.totalScore = 0;
       player.roundHistory = [];
       player.out = false;
+      player.hasScoredThisRound = false;
     });
     this.currentRound = 1;
     this.gameHistory = [];
