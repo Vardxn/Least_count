@@ -245,6 +245,10 @@ class UIManager {
     container.appendChild(inputOverlay);
     container.classList.add('input-active');
 
+    container.addEventListener('click', () => {
+        input.focus();
+    });
+
     // Use InputHandler to focus input or fallback
     const focusInput = () => {
       if (window.inputHandler) {

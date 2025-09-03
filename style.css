@@ -144,7 +144,7 @@ h1 {
 
 .add-player button:hover {
     background: #2563eb;
-    transform: translateY(-1px);
+    /* transform: translateY(-1px); */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -184,7 +184,7 @@ h1 {
 }
 
 .player:hover {
-    transform: translateY(-1px);
+    /* transform: translateY(-1px); */
     box-shadow: var(--shadow-lg);
     border-color: var(--accent);
 }
@@ -365,6 +365,8 @@ h1 {
 .score-input:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    position: relative;
+    z-index: 10;
 }
 
 /* Score Buttons */
@@ -388,7 +390,7 @@ h1 {
 
 .score-confirm-btn:hover {
     background: #059669;
-    transform: translateY(-1px);
+    /* transform: translateY(-1px); */
 }
 
 .score-cancel-btn {
@@ -400,7 +402,7 @@ h1 {
 
 .score-cancel-btn:hover {
     background: #dc2626;
-    transform: translateY(-1px);
+    /* transform: translateY(-1px); */
 }
 
 /* Round Controls */
@@ -426,7 +428,7 @@ h1 {
 
 .add-round-btn:hover {
     background: #059669;
-    transform: translateY(-1px);
+    /* transform: translateY(-1px); */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -461,7 +463,7 @@ h1 {
 .action-buttons button:hover {
     background: var(--bg-primary);
     border-color: var(--accent);
-    transform: translateY(-1px);
+    /* transform: translateY(-1px); */
 }
 
 /* Edit Mode */
