@@ -113,7 +113,7 @@ class UIManager {
 
       const eliminatedLabel = player.out ? '<div class="eliminated-label">❌ Eliminated</div>' : '';
 
-      // Create progress ring for avatar
+      // Create progress ring for avatar - Safari compatible
       const progressPercentage = Math.min((player.totalScore / this.gameLogic.eliminationScore) * 100, 100);
       const strokeColor = this.getProgressColor(progressPercentage);
       const circumference = 2 * Math.PI * 26;
@@ -121,14 +121,14 @@ class UIManager {
 
       const progressRing = `
         <div class="avatar-container">
-          <svg class="progress-ring" width="66" height="66">
+          <svg class="progress-ring" width="66" height="66" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
             <circle cx="33" cy="33" r="26" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"/>
             <circle cx="33" cy="33" r="26" stroke="${strokeColor}" stroke-width="3" fill="none" 
                     stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
                     stroke-linecap="round" transform="rotate(-90 33 33)"
-                    style="transition: stroke-dashoffset 0.5s ease, stroke 0.5s ease"/>
+                    style="transition: stroke-dashoffset 0.5s ease, stroke 0.5s ease; transform-origin: center;"/>
           </svg>
-          <img src="${player.picUrl}" alt="${player.name}" class="player-avatar">
+          <img src="${player.picUrl}" alt="${player.name}" class="player-avatar" loading="lazy" decoding="async">
         </div>
       `;
 
