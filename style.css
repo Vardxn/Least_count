@@ -50,7 +50,7 @@ body {
     padding: 20px;
     position: relative;
     overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling:
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
@@ -124,7 +124,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 100%;
+    width: 100
     margin-bottom: 24px;
 }
 
@@ -285,6 +285,9 @@ h1 {
     transition: all 0.2s ease;
     width: 100%;
     margin: 16px 0;
+    transform: none !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
 }
 
 .click-to-add-container:hover {
@@ -360,6 +363,11 @@ h1 {
     box-shadow: var(--shadow);
     width: 80px;
     text-align: center;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 10;
+    user-select: text;
 }
 
 .score-input:focus {
@@ -617,6 +625,30 @@ input:focus {
     transform: none;
     position: relative;
     z-index: 999;
+}
+
+/* Force input visibility and interaction for iOS keyboard fix */
+.score-input {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 10;
+  user-select: text;
+}
+
+.click-to-add-container {
+  transform: none !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+}
+
+/* Temporarily disable overlays for testing */
+.click-to-add-container::before,
+.click-to-add-container:hover::before,
+.click-to-add-container:hover,
+.click-to-add-container:active {
+  all: unset !important;
+  pointer-events: auto !important;
 }
 
 /* Responsive Design */
