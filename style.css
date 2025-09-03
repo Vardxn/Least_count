@@ -1,4 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lato:wght@400;500;600&family=Fira+Sans:wght@400;500;600&family=Cabin:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lato:wght@400;500;600&family=Fira+Sans:wght@400;500;600&family=Cabin:wght@400;500;600&family+Manrope:wght@400;500;600&display=swap');
+
+/* Critical iPhone Keyboard Fixes */
+html {
+    position: fixed;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    position: relative;
+    height: 100vh;
+    height: -webkit-fill-available;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+input {
+    font-size: 16px !important;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-border-radius: 0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(100, 210, 255, 0.5);
+    color: #1C1C1E;
+    outline: none;
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+}
+
+input:focus {
+    font-size: 16px !important;
+    zoom: 1;
+    -webkit-transform: none;
+    transform: none;
+    position: relative;
+    z-index: 999;
+}
 
 /* Mac Performance Optimizations */
 @media screen and (min-width: 1024px) {
@@ -1307,6 +1347,61 @@ h1 {
         background-attachment: fixed;
         animation: shimmer 25s ease-in-out infinite;
     }
+
+    /* Enhanced Mac Input Optimizations */
+    input[type="text"], input[type="tel"] {
+        font-size: 16px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 2px solid rgba(100, 210, 255, 0.4);
+        border-radius: 14px;
+        padding: 0.875rem 1.125rem;
+        color: #1C1C1E;
+        outline: none;
+        font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+        transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        -webkit-user-select: text;
+        user-select: text;
+        -webkit-touch-callout: default;
+        will-change: transform, border-color, box-shadow;
+    }
+    
+    input[type="text"]:focus, input[type="tel"]:focus {
+        border-color: #007AFF;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow:
+            0 0 0 4px rgba(0, 122, 255, 0.25),
+            0 8px 20px rgba(0, 0, 0, 0.15);
+        transform: scale(1.02);
+    }
+    
+    input[type="text"]:hover, input[type="tel"]:hover {
+        border-color: rgba(100, 210, 255, 0.6);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        transform: translateY(-1px);
+    }
+    
+    /* Enhanced Mac button styling */
+    .score-confirm-btn, .score-cancel-btn {
+        cursor: pointer;
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        will-change: transform, box-shadow;
+    }
+    
+    .score-confirm-btn:active, .score-cancel-btn:active {
+        transform: scale(0.95);
+    }
 }
 
 /* Mac-specific webkit scrollbars */
@@ -2129,6 +2224,170 @@ h1 {
     75% {
         transform: scale(1.1) rotate(-5deg);
         box-shadow: 0 6px 20px rgba(255, 159, 10, 0.4);
+    }
+}
+
+/* iPhone-Specific Media Queries */
+@media screen and (max-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
+    .glass {
+        padding: 1.25rem;
+        margin: 0.75rem auto;
+        max-width: 95vw;
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        border-radius: 18px;
+    }
+    
+    .player {
+        padding: 1rem;
+        margin: 0.75rem 0;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    
+    .click-to-add-container {
+        padding: 0.875rem;
+        border-radius: 14px;
+        background: rgba(100, 210, 255, 0.15);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1.5px solid rgba(100, 210, 255, 0.3);
+        touch-action: manipulation;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    .click-to-add-text {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #007AFF;
+        letter-spacing: 0.3px;
+    }
+    
+    .player-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+    
+    .player-score {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #007AFF;
+    }
+    
+    /* Enhanced input styling for iPhone */
+    input[type="text"], input[type="tel"] {
+        font-size: 16px !important;
+        -webkit-appearance: none;
+        appearance: none;
+        border-radius: 12px;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 2px solid rgba(100, 210, 255, 0.5);
+        color: #1C1C1E;
+        outline: none;
+        -webkit-user-select: text;
+        user-select: text;
+        -webkit-touch-callout: default;
+        touch-action: manipulation;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    input[type="text"]:focus, input[type="tel"]:focus {
+        font-size: 16px !important;
+        zoom: 1;
+        -webkit-transform: none;
+        transform: none;
+        border-color: #007AFF;
+        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+        position: relative;
+        z-index: 999;
+    }
+}
+
+@media screen and (max-width: 375px) and (-webkit-min-device-pixel-ratio: 3) {
+    /* iPhone X/XS/12/13 mini optimizations */
+    .glass {
+        padding: 1rem;
+        margin: 0.5rem auto;
+        max-width: 96vw;
+        border-radius: 16px;
+    }
+    
+    .player {
+        padding: 0.875rem;
+        margin: 0.5rem 0;
+        border-radius: 14px;
+    }
+    
+    .click-to-add-container {
+        padding: 0.75rem;
+        border-radius: 12px;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .click-to-add-text {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .player-name {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .player-score {
+        font-size: 1.4rem;
+    }
+}
+
+@media screen and (max-width: 430px) and (max-height: 932px) and (-webkit-min-device-pixel-ratio: 3) {
+    /* iPhone Pro Max optimizations */
+    .container {
+        padding: 1rem;
+        max-width: 100vw;
+    }
+    
+    .glass {
+        padding: 1.25rem;
+        margin: 0.75rem auto;
+        max-width: 94vw;
+        border-radius: 18px;
+    }
+    
+    .players-container {
+        gap: 1rem;
+    }
+    
+    .player {
+        padding: 1rem;
+        border-radius: 16px;
+    }
+    
+    .click-to-add-container {
+        padding: 1rem;
+        border-radius: 16px;
+        min-height: 56px;
+    }
+    
+    .click-to-add-text {
+        font-size: 1rem;
+        font-weight: 500;
     }
 }
 

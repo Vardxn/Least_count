@@ -201,11 +201,18 @@ class UIManager {
         const inputOverlay = document.createElement('div');
         inputOverlay.className = 'score-input-overlay';
 
-        const input = document.createElement('input');
-        // Use 'tel' instead of 'number' for better iOS support
-        input.type = 'tel';
+        // Use InputHandler to create optimized input
+        const input = window.inputHandler ? 
+            window.inputHandler.createOptimizedInput('tel', 'Score') :
+            document.createElement('input');
+            
+        if (!window.inputHandler) {
+            // Fallback if InputHandler not available
+            input.type = 'tel';
+            input.placeholder = 'Score';
+        }
+        
         input.className = 'score-input';
-        input.placeholder = 'Score';
         input.inputMode = 'numeric';
         input.pattern = '[0-9]*';
         input.autocomplete = 'off';
@@ -235,18 +242,23 @@ class UIManager {
         container.appendChild(inputOverlay);
         container.classList.add('input-active');
 
-        // Focus input with longer delay for iPhone and force focus
+        // Use InputHandler to focus input or fallback
         const focusInput = () => {
-            input.focus();
-            input.click(); // Additional trigger for iOS
-            setTimeout(() => {
+            if (window.inputHandler) {
+                window.inputHandler.focusInput(input);
+            } else {
+                // Fallback focus logic
                 input.focus();
-                input.select();
-            }, 100); // Additional delayed focus
+                input.click();
+                setTimeout(() => {
+                    input.focus();
+                    input.select();
+                }, 100);
+            }
         };
 
         // Try immediate focus and delayed focus
-        setTimeout(focusInput, 150); // Longer initial delay for iPhone
+        setTimeout(focusInput, 150);
 
         const handleConfirm = () => {
             const scoreToAdd = parseInt(input.value) || 0;
@@ -271,12 +283,35 @@ class UIManager {
         };
 
         const handleCancel = () => {
+            if (window.inputHandler) {
+                window.inputHandler.blurInput(input);
+            }
             container.innerHTML = originalContent;
             container.classList.remove('input-active');
         };
 
         confirmBtn.addEventListener('click', handleConfirm);
         cancelBtn.addEventListener('click', handleCancel);
+
+        // Listen for InputHandler custom events
+        if (window.inputHandler) {
+            const handleInputConfirm = (e) => {
+                if (e.detail.input === input) {
+                    handleConfirm();
+                    document.removeEventListener('inputconfirm', handleInputConfirm);
+                }
+            };
+            
+            const handleInputCancel = (e) => {
+                if (e.detail.input === input) {
+                    handleCancel();
+                    document.removeEventListener('inputcancel', handleInputCancel);
+                }
+            };
+            
+            document.addEventListener('inputconfirm', handleInputConfirm);
+            document.addEventListener('inputcancel', handleInputCancel);
+        }
 
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -315,12 +350,23 @@ class UIManager {
         const roundHistoryItems = playerCard.querySelectorAll('.round-history-item');
         roundHistoryItems.forEach((item, roundNum) => {
             const currentScore = this.gameLogic.players[playerIdx].roundHistory[roundNum];
-            const input = document.createElement('input');
-            input.type = 'number';
+            
+            // Use InputHandler to create optimized input
+            const input = window.inputHandler ? 
+                window.inputHandler.createOptimizedInput('tel', '') :
+                document.createElement('input');
+                
+            if (!window.inputHandler) {
+                // Fallback if InputHandler not available
+                input.type = 'tel';
+            }
+            
             input.value = currentScore;
             input.className = 'round-edit-input';
             input.setAttribute('data-round', roundNum);
             input.setAttribute('min', '0');
+            input.inputMode = 'numeric';
+            input.pattern = '[0-9]*';
 
             input.addEventListener('input', () => this.updateLiveTotalScore(playerIdx));
 
