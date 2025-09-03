@@ -72,18 +72,17 @@ class UIManager {
                 </svg>
             `;
 
-      const countClass = this.gameLogic.getCountClass(player.totalScore);
-      const lastScore = this.gameLogic.lastRoundScores[idx] || 0;
-      const lastRoundLabel = this.gameLogic.currentRound - 1 === 1 ? 'Round 1' : `R${this.gameLogic.currentRound - 1}`;
-      const lastRoundBadge = lastScore !== 0 ? `<span class="last-round-badge">${lastRoundLabel}: +${lastScore}</span>` : '';
+      const lastScore = player.roundHistory.length > 0 ? player.roundHistory[player.roundHistory.length - 1] : null;
+      const lastRoundLabel = `R${this.gameLogic.currentRound - 1}`;
+      const lastRoundInfo = lastScore !== null && this.gameLogic.currentRound > 1 ? `<div class="previous-round-info">${lastRoundLabel} Score: <strong>${lastScore}</strong></div>` : '';
 
       const roundHistoryHtml =
         player.roundHistory.length > 0
-          ? `<div class="round-history-label">Previous Rounds:</div>` +
+          ? `<div class="round-history-label">All Rounds:</div>` +
             player.roundHistory
               .map((score, roundNum) => {
-                const roundLabel = roundNum === 0 ? 'Round 1' : `R${roundNum + 1}`;
-                return `<div class="round-history-item" data-round="${roundNum}">${roundLabel}: ${score}</div>`;
+                const roundLabelText = roundNum === 0 ? 'Round 1' : `R${roundNum + 1}`;
+                return `<div class="round-history-item" data-round="${roundNum}">${roundLabelText}: ${score}</div>`;
               })
               .join('')
           : '';
@@ -97,21 +96,14 @@ class UIManager {
                 </div>
                 <div class="player-info">
                     <div class="player-name" data-idx="${idx}">${player.name}</div>
-                    ${lastRoundBadge}
-                    <div class="round-history">${roundHistoryHtml}</div>
-                    <div class="click-to-add-container" data-idx="${idx}" ${player.out ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
-                        <div class="click-to-add-text">Click to add score</div>
-                        <div class="current-score-display">
-                            <span class="score-value" id="score_${idx}">${player.count}</span>
-                        </div>
-                    </div>
-                    <div class="player-count ${countClass}">
-                        ${this.gameLogic.currentRound === 1 ? 'Round 1' : `R${this.gameLogic.currentRound}`}: 
-                        <span class="score-value">${player.count}</span>
-                    </div>
                     <div class="player-total-display">
                         Total Score: <span class="total-score-value" data-idx="${idx}">${player.totalScore}</span>
                     </div>
+                    <div class="click-to-add-container" data-idx="${idx}" ${player.out ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
+                        <div class="click-to-add-text">Add Score for R${this.gameLogic.currentRound}</div>
+                    </div>
+                    ${lastRoundInfo}
+                    <div class="round-history">${roundHistoryHtml}</div>
                 </div>
                 <div class="edit-controls">
                     <button class="save-edit-btn" data-idx="${idx}">Save</button>
@@ -203,7 +195,7 @@ class UIManager {
     }
 
     const originalText = container.querySelector('.click-to-add-text');
-    if(originalText) originalText.style.display = 'none';
+    if (originalText) originalText.style.display = 'none';
 
     // Create input overlay
     const inputOverlay = document.createElement('div');
@@ -235,7 +227,7 @@ class UIManager {
     const cleanup = () => {
       container.classList.remove('input-active');
       inputOverlay.remove();
-      if(originalText) originalText.style.display = 'block';
+      if (originalText) originalText.style.display = 'block';
       document.removeEventListener('click', outsideClickListener);
     };
 
@@ -259,13 +251,13 @@ class UIManager {
     };
 
     confirmBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        handleConfirm();
+      e.stopPropagation();
+      handleConfirm();
     });
 
     cancelBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        handleCancel();
+      e.stopPropagation();
+      handleCancel();
     });
 
     input.addEventListener('keydown', (e) => {
@@ -275,9 +267,9 @@ class UIManager {
         handleCancel();
       }
     });
-    
+
     setTimeout(() => {
-        document.addEventListener('click', outsideClickListener);
+      document.addEventListener('click', outsideClickListener);
     }, 0);
   }
 
