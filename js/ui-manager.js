@@ -25,7 +25,7 @@ class UIManager {
     document.getElementById('resetBtn').addEventListener('click', () => this.handleReset());
     document.getElementById('leaderboardBtn').addEventListener('click', () => this.showLeaderboard());
     document.getElementById('saveBtn').addEventListener('click', () => this.handleSave());
-    
+
     // Handle elimination score changes
     if (this.elements.eliminationScore) {
       this.elements.eliminationScore.addEventListener('input', (e) => {
@@ -84,7 +84,9 @@ class UIManager {
       `;
 
       // Generate round history HTML
-      const roundHistoryHTML = player.roundHistory.length > 0 ? `
+      const roundHistoryHTML =
+        player.roundHistory.length > 0
+          ? `
         <div class="round-history-container">
           <button class="toggle-history-btn" data-idx="${idx}">
             <span class="history-icon">📊</span> View Previous Rounds
@@ -95,13 +97,17 @@ class UIManager {
               <button class="edit-history-btn" data-idx="${idx}">Edit Scores</button>
             </div>
             <div class="round-history-list">
-              ${player.roundHistory.map((score, roundIdx) => `
+              ${player.roundHistory
+                .map(
+                  (score, roundIdx) => `
                 <div class="round-item" data-player="${idx}" data-round="${roundIdx}">
                   <span class="round-label">R${roundIdx + 1}:</span>
                   <span class="round-score" data-original="${score}">${score}</span>
                   <input type="number" class="round-edit-input" value="${score}" style="display: none;" min="0" max="200">
                 </div>
-              `).join('')}
+              `
+                )
+                .join('')}
             </div>
             <div class="edit-controls" style="display: none;">
               <button class="save-history-btn" data-idx="${idx}">Save Changes</button>
@@ -109,7 +115,8 @@ class UIManager {
             </div>
           </div>
         </div>
-      ` : '';
+      `
+          : '';
 
       const eliminatedLabel = player.out ? '<div class="eliminated-label">❌ Eliminated</div>' : '';
 
@@ -179,7 +186,7 @@ class UIManager {
         const idx = parseInt(btn.getAttribute('data-idx'));
         const scoreInput = document.querySelector(`.score-input[data-idx="${idx}"]`);
         const score = parseInt(scoreInput.value, 10);
-        
+
         if (!isNaN(score) && score >= 0) {
           this.gameLogic.updatePlayerScore(idx, score);
           scoreInput.value = '';
@@ -207,11 +214,9 @@ class UIManager {
         const idx = parseInt(btn.getAttribute('data-idx'));
         const historyContent = document.getElementById(`history-${idx}`);
         const isVisible = historyContent.style.display !== 'none';
-        
+
         historyContent.style.display = isVisible ? 'none' : 'block';
-        btn.innerHTML = isVisible ? 
-          '<span class="history-icon">📊</span> View Previous Rounds' : 
-          '<span class="history-icon">📊</span> Hide Previous Rounds';
+        btn.innerHTML = isVisible ? '<span class="history-icon">📊</span> View Previous Rounds' : '<span class="history-icon">📊</span> Hide Previous Rounds';
       });
     });
 
@@ -263,7 +268,7 @@ class UIManager {
     const historyContent = document.getElementById(`history-${playerIdx}`);
     const roundItems = historyContent.querySelectorAll('.round-item');
     const player = this.gameLogic.players[playerIdx];
-    
+
     // Save the current state for undo functionality
     this.gameLogic.saveGameState();
 
@@ -272,7 +277,7 @@ class UIManager {
       const scoreInput = item.querySelector('.round-edit-input');
       const newScore = parseInt(scoreInput.value, 10) || 0;
       const oldScore = player.roundHistory[roundIdx];
-      
+
       if (newScore !== oldScore) {
         player.roundHistory[roundIdx] = newScore;
         hasChanges = true;
@@ -307,7 +312,7 @@ class UIManager {
       const scoreSpan = item.querySelector('.round-score');
       const scoreInput = item.querySelector('.round-edit-input');
       const originalScore = scoreSpan.getAttribute('data-original');
-      
+
       scoreSpan.style.display = 'inline';
       scoreInput.style.display = 'none';
       scoreInput.value = originalScore; // Reset to original value if cancelled
@@ -316,7 +321,6 @@ class UIManager {
 
   // This function is no longer needed with persistent input fields
   // showScoreInput(playerIdx, container) { ... }
-
 
   enterEditMode(playerIdx) {
     this.editModeData[playerIdx] = {

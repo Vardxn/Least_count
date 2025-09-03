@@ -58,7 +58,7 @@ class GameLogic {
   recalculatePlayerTotal(playerIndex) {
     const player = this.players[playerIndex];
     player.totalScore = player.roundHistory.reduce((sum, score) => sum + score, 0);
-    
+
     // Check elimination status
     if (player.totalScore >= this.eliminationScore && !player.out) {
       player.out = true;
