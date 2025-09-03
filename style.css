@@ -622,6 +622,10 @@ input:focus {
   pointer-events: auto !important;
 }
 
+.click-to-add-container.input-active .click-to-add-text {
+  display: none;
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
     body {
