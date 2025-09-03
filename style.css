@@ -568,7 +568,8 @@ h1 {
     border-radius: 12px;
     padding: 0.5rem 0.75rem;
     font-family: 'Cabin', -apple-system, BlinkMacSystemFont, 'SF Mono', monospace;
-    font-size: 16px; /* Exactly 16px to prevent zoom on iOS */
+    font-size: 16px;
+    /* Exactly 16px to prevent zoom on iOS */
     font-weight: 600;
     color: #1C1C1E;
     text-align: center;
@@ -1000,7 +1001,8 @@ h1 {
     .score-input {
         width: 100px !important;
         padding: 0.75rem 1rem !important;
-        font-size: 16px !important; /* Exactly 16px to prevent zoom on iOS */
+        font-size: 16px !important;
+        /* Exactly 16px to prevent zoom on iOS */
         min-height: 48px !important;
         -webkit-appearance: none !important;
         appearance: none !important;
@@ -1063,7 +1065,8 @@ h1 {
 
     .score-input {
         width: 90px;
-        font-size: 16px; /* Exactly 16px to prevent zoom on iOS */
+        font-size: 16px;
+        /* Exactly 16px to prevent zoom on iOS */
         padding: 0.75rem 1rem;
         min-height: 44px;
         -webkit-appearance: none;
