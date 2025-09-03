@@ -202,17 +202,19 @@ class UIManager {
     inputOverlay.className = 'score-input-overlay';
 
     // Use InputHandler to create optimized input
-    const input = window.inputHandler ? window.inputHandler.createOptimizedInput('number', 'Score') : document.createElement('input');
+    const input = window.inputHandler ? window.inputHandler.createOptimizedInput('tel', 'Score') : document.createElement('input');
 
     if (!window.inputHandler) {
       // Fallback if InputHandler not available
-      input.type = 'number';
+      input.type = 'tel';
       input.placeholder = 'Score';
     }
 
     input.className = 'score-input';
     input.setAttribute('inputmode', 'numeric');
     input.setAttribute('pattern', '[0-9]*');
+    input.setAttribute('minlength', '1');
+    input.setAttribute('maxlength', '3');
     input.autocomplete = 'off';
     input.autocorrect = 'off';
     input.autocapitalize = 'off';
@@ -350,11 +352,11 @@ class UIManager {
       const currentScore = this.gameLogic.players[playerIdx].roundHistory[roundNum];
 
       // Use InputHandler to create optimized input
-      const input = window.inputHandler ? window.inputHandler.createOptimizedInput('number', '') : document.createElement('input');
+      const input = window.inputHandler ? window.inputHandler.createOptimizedInput('tel', '') : document.createElement('input');
 
       if (!window.inputHandler) {
         // Fallback if InputHandler not available
-        input.type = 'number';
+        input.type = 'tel';
       }
 
       input.value = currentScore;
@@ -363,6 +365,8 @@ class UIManager {
       input.setAttribute('min', '0');
       input.setAttribute('inputmode', 'numeric');
       input.setAttribute('pattern', '[0-9]*');
+      input.setAttribute('minlength', '1');
+      input.setAttribute('maxlength', '3');
 
       input.addEventListener('input', () => this.updateLiveTotalScore(playerIdx));
 

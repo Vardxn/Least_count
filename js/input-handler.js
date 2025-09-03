@@ -517,10 +517,12 @@ class InputHandler {
     input.type = type;
     input.placeholder = placeholder;
 
-    // Add inputmode and pattern for numeric inputs
-    if (type === 'number') {
+    // Add inputmode and pattern for numeric inputs (tel or number)
+    if (type === 'tel' || type === 'number') {
       input.setAttribute('inputmode', 'numeric');
       input.setAttribute('pattern', '[0-9]*');
+      input.setAttribute('minlength', '1');
+      input.setAttribute('maxlength', '3');
     }
 
     // Apply platform-specific attributes
