@@ -468,9 +468,17 @@
 
         /* Add pulse effect for better visibility */
         @keyframes notification-pulse {
-            0% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
-            50% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.4); }
-            100% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+            0% {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.4);
+            }
+
+            100% {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
         }
 
         .notification-toast.show {
@@ -1326,13 +1334,13 @@
             function showNotification(message, duration = 3000) {
                 const toast = document.getElementById('notificationToast');
                 const overlay = document.getElementById('notificationOverlay');
-                
+
                 toast.textContent = message;
-                
+
                 // Show overlay and toast
                 overlay.classList.add('show');
                 toast.classList.add('show');
-                
+
                 // Auto-hide after duration
                 setTimeout(() => {
                     toast.classList.remove('show');
@@ -1340,7 +1348,7 @@
                 }, duration);
 
                 // Allow clicking overlay to dismiss
-                overlay.addEventListener('click', function() {
+                overlay.addEventListener('click', function () {
                     toast.classList.remove('show');
                     overlay.classList.remove('show');
                 });
