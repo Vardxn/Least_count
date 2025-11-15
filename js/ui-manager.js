@@ -477,12 +477,48 @@ class UIManager {
   }
 
   handleReset() {
-    modalManager.showConfirm('Reset Game?', 'Are you sure you want to reset all scores and start over?', () => {
-      this.gameLogic.resetGame();
-      this.updateRoundCounter();
-      this.renderPlayers();
-      modalManager.showSuccess('Game Reset!', 'Starting fresh with Round 1.');
-    });
+    const resetOptions = `
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+        <button id="resetScores" style="padding: 14px 20px; background: linear-gradient(135deg, #3B82F6, #1E40AF); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
+          Reset Scores Only
+        </button>
+        <button id="resetNames" style="padding: 14px 20px; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
+          Change Player Names
+        </button>
+        <button id="resetAll" style="padding: 14px 20px; background: linear-gradient(135deg, #EF4444, #DC2626); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
+          Reset Everything
+        </button>
+      </div>
+    `;
+    
+    modalManager.showCustom('Reset Options', resetOptions);
+    
+    // Add event listeners after modal is shown
+    setTimeout(() => {
+      document.getElementById('resetScores')?.addEventListener('click', () => {
+        this.gameLogic.resetGame();
+        this.updateRoundCounter();
+        this.renderPlayers();
+        modalManager.closeModal();
+        modalManager.showSuccess('Scores Reset!', 'Starting fresh with Round 1.');
+      });
+      
+      document.getElementById('resetNames')?.addEventListener('click', () => {
+        localStorage.removeItem('hasCompletedSetup');
+        localStorage.removeItem('playerCount');
+        modalManager.closeModal();
+        location.reload();
+      });
+      
+      document.getElementById('resetAll')?.addEventListener('click', () => {
+        this.gameLogic.resetGame();
+        localStorage.removeItem('hasCompletedSetup');
+        localStorage.removeItem('playerCount');
+        localStorage.removeItem('currentGame');
+        modalManager.closeModal();
+        location.reload();
+      });
+    }, 100);
   }
 
   async showLeaderboard() {

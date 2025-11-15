@@ -69,10 +69,176 @@ function setupIOSKeyboardFixes() {
   }
 }
 
+// Player Setup Modal Handler
+function setupPlayerNamingModal() {
+  const setupModal = document.getElementById('setupModal');
+  const appContainer = document.getElementById('appContainer');
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const playerSetupGrid = document.getElementById('playerSetupGrid');
+  const playerCountText = document.getElementById('playerCountText');
+  const skipAllBtn = document.getElementById('skipAll');
+  const backBtn = document.getElementById('backToStep1');
+  const startBtn = document.getElementById('startGame');
+
+  let selectedPlayerCount = 0;
+
+  // Check if user has already set up names (localStorage)
+  const hasSetupBefore = localStorage.getItem('hasCompletedSetup');
+  const savedPlayerCount = localStorage.getItem('playerCount');
+  
+  if (hasSetupBefore && savedPlayerCount) {
+    // Skip setup and show app directly with saved player count
+    const count = parseInt(savedPlayerCount);
+    gameLogic.players = gameLogic.players.slice(0, count);
+    setupModal.style.display = 'none';
+    appContainer.style.display = 'block';
+    return;
+  }
+
+  // Step 1: Player count selection
+  const playerCountButtons = document.querySelectorAll('.player-count-btn');
+  
+  playerCountButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedPlayerCount = parseInt(btn.dataset.count);
+      
+      // Update UI
+      playerCountButtons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      
+      // Animate to step 2
+      setTimeout(() => {
+        step1.style.display = 'none';
+        step2.style.display = 'block';
+        generatePlayerInputs(selectedPlayerCount);
+      }, 200);
+    });
+  });
+
+  // Skip all setup - use 4 default players
+  skipAllBtn.addEventListener('click', () => {
+    gameLogic.players = gameLogic.players.slice(0, 4);
+    localStorage.setItem('playerCount', '4');
+    closeSetupAndStartGame(false);
+  });
+
+  // Back button
+  backBtn.addEventListener('click', () => {
+    step2.style.display = 'none';
+    step1.style.display = 'block';
+    playerSetupGrid.innerHTML = '';
+  });
+
+  // Start game button
+  startBtn.addEventListener('click', () => {
+    closeSetupAndStartGame(true);
+  });
+
+  function generatePlayerInputs(count) {
+    playerSetupGrid.innerHTML = '';
+    playerCountText.textContent = `Enter names for your ${count} players`;
+    
+    for (let i = 0; i < count; i++) {
+      const playerItem = document.createElement('div');
+      playerItem.className = 'player-setup-item';
+      
+      playerItem.innerHTML = `
+        <label class="player-setup-label">
+          <div class="player-setup-icon">${i + 1}</div>
+          Player ${i + 1}
+        </label>
+        <input 
+          type="text" 
+          class="player-setup-input" 
+          id="playerName${i}" 
+          placeholder="Player ${i + 1}"
+          maxlength="15"
+          autocomplete="off"
+        />
+      `;
+      
+      playerSetupGrid.appendChild(playerItem);
+    }
+
+    // Auto-focus first input
+    setTimeout(() => {
+      document.getElementById('playerName0')?.focus();
+    }, 300);
+
+    // Handle Enter key to move to next input
+    playerSetupGrid.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const inputs = Array.from(playerSetupGrid.querySelectorAll('.player-setup-input'));
+        const currentIndex = inputs.indexOf(document.activeElement);
+        
+        if (currentIndex < inputs.length - 1) {
+          inputs[currentIndex + 1].focus();
+        } else {
+          // Last input, trigger start game
+          closeSetupAndStartGame(true);
+        }
+      }
+    });
+  }
+
+  function closeSetupAndStartGame(applyNames) {
+    // Remove extra players based on selected count
+    gameLogic.players = gameLogic.players.slice(0, selectedPlayerCount || 4);
+    
+    if (applyNames && selectedPlayerCount > 0) {
+      // Apply custom names to players
+      for (let i = 0; i < selectedPlayerCount; i++) {
+        const input = document.getElementById(`playerName${i}`);
+        const customName = input?.value.trim();
+        
+        if (customName) {
+          gameLogic.players[i].name = customName;
+        }
+      }
+      
+      // Re-render to show updated names
+      uiManager.renderPlayers();
+    }
+    
+    // Save player count to localStorage
+    localStorage.setItem('playerCount', (selectedPlayerCount || 4).toString());
+    localStorage.setItem('hasCompletedSetup', 'true');
+    
+    // Animate modal out
+    setupModal.style.animation = 'modalSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    setTimeout(() => {
+      setupModal.style.display = 'none';
+      appContainer.style.display = 'block';
+    }, 300);
+  }
+}
+
+// Add slide out animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes modalSlideOut {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-30px) scale(0.95);
+    }
+  }
+`;
+document.head.appendChild(style);
+
 window.addEventListener('DOMContentLoaded', function () {
   gameLogic = new GameLogic();
   modalManager = new ModalManager();
   uiManager = new UIManager(gameLogic);
+
+  // Initialize setup modal FIRST
+  setupPlayerNamingModal();
 
   uiManager.updateRoundCounter();
   uiManager.renderPlayers();

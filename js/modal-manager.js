@@ -153,4 +153,52 @@ class ModalManager {
       onSecondary: onCancel,
     });
   }
+
+  showCustom(title, customHTML) {
+    const existingModal = document.querySelector('.modal-overlay');
+    if (existingModal) {
+      existingModal.remove();
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+
+    const dialog = document.createElement('div');
+    dialog.className = 'modal-dialog modal-info';
+
+    dialog.innerHTML = `
+      <div class="modal-header">
+        <div class="modal-icon">⚙️</div>
+        <h2 class="modal-title">${title}</h2>
+      </div>
+      <div class="modal-message">${customHTML}</div>
+    `;
+
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        this.closeModal();
+      }
+    });
+
+    setTimeout(() => {
+      overlay.classList.add('show');
+    }, 10);
+
+    return overlay;
+  }
+
+  closeModal() {
+    const overlay = document.querySelector('.modal-overlay');
+    if (overlay) {
+      overlay.classList.remove('show');
+      setTimeout(() => {
+        if (overlay.parentNode) {
+          overlay.remove();
+        }
+      }, 300);
+    }
+  }
 }

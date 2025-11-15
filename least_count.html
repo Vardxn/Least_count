@@ -109,6 +109,262 @@
             touch-action: manipulation;
         }
 
+        /* ==========================================
+           PLAYER SETUP MODAL
+        ========================================== */
+        .setup-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .setup-modal-content {
+            background: var(--gradient-surface);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: var(--border-radius-xl);
+            padding: 40px 30px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: var(--shadow-lg), var(--shadow-blue);
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .setup-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 8px;
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .setup-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .player-setup-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .player-setup-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .player-setup-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .player-setup-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--gradient-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .player-setup-input {
+            padding: 14px 16px;
+            background: var(--bg-surface);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-md);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .player-setup-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .player-setup-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .setup-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .setup-btn {
+            flex: 1;
+            padding: 18px 24px;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-appearance: none;
+            appearance: none;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 56px;
+        }
+
+        .skip-btn {
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .skip-btn:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .skip-btn:active {
+            transform: translateY(0);
+        }
+
+        .start-btn {
+            background: var(--gradient-blue);
+            color: white;
+            box-shadow: var(--shadow-md), var(--shadow-blue);
+        }
+
+        .start-btn:hover {
+            background: linear-gradient(135deg, var(--success-light) 0%, var(--success) 100%);
+            box-shadow: var(--shadow-lg), 0 0 30px rgba(16, 185, 129, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .start-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Player Count Selector */
+        .player-count-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .player-count-btn {
+            padding: 20px 24px;
+            background: var(--bg-surface);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-md);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-appearance: none;
+            appearance: none;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 60px;
+        }
+
+        .player-count-btn:hover {
+            background: var(--gradient-blue);
+            border-color: var(--accent-blue);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md), var(--shadow-blue);
+        }
+
+        .player-count-btn:active {
+            transform: scale(0.98);
+        }
+
+        .player-count-btn.selected {
+            background: var(--gradient-blue);
+            border-color: var(--accent-blue);
+            color: white;
+            box-shadow: var(--shadow-blue);
+        }
+
+        .setup-step {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile responsive for setup modal */
+        @media (max-width: 600px) {
+            .setup-modal-content {
+                padding: 30px 20px;
+            }
+
+            .setup-title {
+                font-size: 1.75rem;
+            }
+
+            .player-setup-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .setup-buttons {
+                flex-direction: column;
+            }
+
+            .setup-btn {
+                width: 100%;
+            }
+        }
+
         .app-container {
             max-width: 900px;
             margin: 0 auto;
@@ -1272,7 +1528,51 @@
 </head>
 
 <body>
-    <div class="app-container">
+    <!-- Player Setup Modal -->
+    <div class="setup-modal" id="setupModal">
+        <div class="setup-modal-content" id="setupModalContent">
+            <!-- Step 1: Number of Players -->
+            <div class="setup-step" id="step1">
+                <h2 class="setup-title">🎮 Setup Your Game</h2>
+                <p class="setup-subtitle">How many players are playing today?</p>
+                
+                <div class="player-count-selector">
+                    <button class="player-count-btn" data-count="2">2 Players</button>
+                    <button class="player-count-btn" data-count="3">3 Players</button>
+                    <button class="player-count-btn" data-count="4">4 Players</button>
+                    <button class="player-count-btn" data-count="5">5 Players</button>
+                    <button class="player-count-btn" data-count="6">6 Players</button>
+                    <button class="player-count-btn" data-count="7">7 Players</button>
+                    <button class="player-count-btn" data-count="8">8 Players</button>
+                </div>
+                
+                <button class="setup-btn skip-btn" id="skipAll" style="margin-top: 20px; width: 100%;">
+                    Skip Setup (Use 4 Default Players)
+                </button>
+            </div>
+            
+            <!-- Step 2: Name Players -->
+            <div class="setup-step" id="step2" style="display: none;">
+                <h2 class="setup-title">📝 Name Your Players</h2>
+                <p class="setup-subtitle" id="playerCountText">Enter names for your players</p>
+                
+                <div class="player-setup-grid" id="playerSetupGrid">
+                    <!-- Player name inputs will be generated here -->
+                </div>
+                
+                <div class="setup-buttons">
+                    <button class="setup-btn skip-btn" id="backToStep1">
+                        ← Back
+                    </button>
+                    <button class="setup-btn start-btn" id="startGame">
+                        Start Game →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container" id="appContainer" style="display: none;">
         <header class="header">
             <h1 class="app-title">Least Count</h1>
             <div class="round-info" id="roundCounter">Round 1</div>
