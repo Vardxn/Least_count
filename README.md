@@ -1,53 +1,59 @@
-<<<<<<< HEAD
-# 🎮 Least Count - Premium Card Game Scoring App
+# 🎮 Least Count - 8 Player Card Game Scorer
 
-A beautiful, mobile-first card game scoring application built with modern web technologies and iOS Liquid Glass design aesthetics.
+A beautiful, mobile-first card game scoring application optimized for 8 players on Android & iPhone with modern web technologies and premium design.
+
+## 🌐 **Live Demo**
+
+**🚀 Play Now:** [https://vardxn.github.io/Least_count/](https://vardxn.github.io/Least_count/)
 
 ## ✨ Features
 
-- **🎯 Round-based Scoring System** - Track scores across multiple rounds
-- **👥 Multi-player Support** - Add/remove players dynamically
-- **📊 Real-time Score Tracking** - Live updates with visual progress indicators
+- **👥 8 Players by Default** - Optimized for 8-player card games
+- **📱 Android Optimized** - Perfect for Chrome & Brave browsers
+- **🎯 Round-based Scoring System** - Track scores across unlimited rounds
+- ** Real-time Score Tracking** - Live updates with visual progress indicators
 - **✏️ Edit Mode** - Modify past round scores with intuitive interface
 - **🎊 Visual Celebrations** - Confetti animations for eliminations and wins
-- **📱 Mobile-First Design** - Optimized for phone and tablet use
+- **📱 Mobile-First Design** - Optimized for Android phones and tablets
 - **🔄 Undo/Redo System** - Comprehensive game state management
-- **🎨 Liquid Glass UI** - Premium iOS inspired design language
-- **💾 Database Integration** - Save and share games online/offline
+- **🎨 Premium UI** - Modern dark theme with liquid glass aesthetics
+- **💾 Offline Support** - Works without internet connection
 - **🏆 Leaderboard** - Track high scores and game history
 
 ## 🎮 How to Play
 
-1. **Add Players** - Start by adding 2 or more players
-2. **Score Rounds** - Use +/- buttons to track each player's score for the current round
-3. **Complete Rounds** - Click "Next Round" to finalize scores and move to the next round
-4. **Edit Scores** - Click "Edit" on any player to modify their round history
-5. **Win Condition** - Players are eliminated when their total score reaches 100
-6. **Game End** - Last player remaining wins!
+1. **8 Players Ready** - Game starts with 8 players pre-loaded
+2. **Customize Names** - Tap player names to personalize
+3. **Score Rounds** - Enter scores for each player each round
+4. **Complete Rounds** - Click "Next Round" to finalize and continue
+5. **Edit History** - View and modify any past round scores
+6. **Win Condition** - Players eliminated at 100 points (adjustable)
+7. **Last Standing Wins!** - Final player wins the game
 
 ## 🛠️ Tech Stack
 
 - **HTML5** - Semantic markup structure
 - **CSS3** - Advanced styling with backdrop-filter effects
 - **Vanilla JavaScript** - Modern ES6+ classes and modules
-- **Supabase** - Optional database for online features
 - **PWA Ready** - Progressive Web App capabilities
+- **Responsive Grid** - Auto-fit layout for 8 players
 
 ## 📁 Project Structure
 
 ```
 Least_Count/
 ├── index.html              # Landing page with auto-redirect
-├── least_count.html        # Main game interface
+├── least_count.html        # Main game interface (8 players)
 ├── style.css               # Complete styling system
 ├── database.js             # Database integration
 ├── manifest.json           # PWA manifest
 ├── js/
-│   ├── game-logic.js       # Core game mechanics
+│   ├── game-logic.js       # Core game mechanics (8 players)
 │   ├── ui-manager.js       # UI rendering and interactions
 │   ├── modal-manager.js    # Modal dialogs and notifications
 │   └── app.js              # Application initialization
 ├── avatars/                # Player avatar images
+```
 ├── README.md               # This file
 └── SETUP.md                # Deployment instructions
 ```
