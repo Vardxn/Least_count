@@ -11,68 +11,137 @@
     <title>Least Count - Card Game Scorer</title>
     <style>
         :root {
-            --bg-primary: #000000;
-            --bg-surface: #121212;
-            --border-color: #222222;
-            --text-primary: #E0E0E0;
-            --text-secondary: #A0A0A0;
-            --accent-blue: #3B82F6;
-            --accent-dark-blue: #1E40AF;
-        }
+            <!DOCTYPE html>
+            <html lang="en">
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-primary);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Inter', sans-serif;
-        }
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
+                <title>Least Count — Start</title>
+                <meta name="theme-color" content="#000000">
+                <link rel="manifest" href="manifest.json">
+                <style>
+                    :root{--bg:#000;--card:#121212;--muted:#9ca3af;--accent:#3B82F6;--accent2:#10B981}
+                    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;background:radial-gradient(ellipse at 10% 90%, rgba(59,130,246,0.06), transparent),#000;color:#e6eef8}
+                    .wrap{max-width:760px;margin:48px auto;padding:24px}
+                    .card{background:linear-gradient(145deg,#0f1724,#111827);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:22px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+                    h1{margin:0 0 8px;font-size:1.6rem}
+                    p.lead{color:var(--muted);margin-top:0}
+                    .count-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
+                    .count-btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.03);color:#e6eef8;padding:12px;border-radius:10px;font-weight:700;cursor:pointer}
+                    .count-btn.selected{background:linear-gradient(90deg,var(--accent),#8b5cf6);box-shadow:0 6px 18px rgba(59,130,246,0.16)}
+                    .names{margin-top:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+                    .name-input{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
+                    .row{display:flex;gap:10px;margin-top:18px}
+                    .btn{flex:1;padding:12px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+                    .btn.primary{background:linear-gradient(90deg,var(--accent2),#059669);color:white}
+                    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+                    @media(max-width:700px){.count-grid{grid-template-columns:repeat(2,1fr)}.names{grid-template-columns:1fr}}
+                </style>
+            </head>
 
-        .redirect-container {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
-            max-width: 90%;
-            width: 400px;
-        }
+            <body>
+                <div class="wrap">
+                    <div class="card">
+                        <h1>Least Count — Start Game</h1>
+                        <p class="lead">Choose how many players will play, then enter their names. You can skip naming to use defaults.</p>
 
-        h1 {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            font-size: 2rem;
-            font-weight: 700;
-        }
+                        <div>
+                            <label style="display:block;color:var(--muted);font-weight:600">Number of players</label>
+                            <div class="count-grid" id="countGrid">
+                                <button class="count-btn" data-count="2">2</button>
+                                <button class="count-btn" data-count="3">3</button>
+                                <button class="count-btn" data-count="4">4</button>
+                                <button class="count-btn" data-count="5">5</button>
+                                <button class="count-btn" data-count="6">6</button>
+                                <button class="count-btn" data-count="7">7</button>
+                                <button class="count-btn" data-count="8">8</button>
+                            </div>
+                        </div>
 
-        p {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-        }
+                        <div id="namesContainer" style="display:none">
+                            <label style="display:block;color:var(--muted);font-weight:600">Player names (optional)</label>
+                            <div class="names" id="namesGrid">
+                                <!-- inputs generated here -->
+                            </div>
+                        </div>
 
-        .redirect-btn {
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: background-color 0.2s ease;
-        }
+                        <div class="row">
+                            <button class="btn ghost" id="skipBtn">Skip & Use Defaults</button>
+                            <button class="btn primary" id="startBtn">Start Game</button>
+                        </div>
+                    </div>
+                </div>
 
-        .redirect-btn:hover {
-            background-color: var(--accent-dark-blue);
-        }
+                <script>
+                    (function(){
+                        const countGrid=document.getElementById('countGrid');
+                        const namesContainer=document.getElementById('namesContainer');
+                        const namesGrid=document.getElementById('namesGrid');
+                        const startBtn=document.getElementById('startBtn');
+                        const skipBtn=document.getElementById('skipBtn');
+                        let selected=4;
 
+                        function renderInputs(n){
+                            namesGrid.innerHTML='';
+                            for(let i=0;i<n;i++){
+                                const inp=document.createElement('input');
+                                inp.type='text';
+                                inp.placeholder=`Player ${i+1}`;
+                                inp.className='name-input';
+                                inp.id=`startName${i}`;
+                                namesGrid.appendChild(inp);
+                            }
+                        }
+
+                        function selectCount(n,el){
+                            selected=n;
+                            countGrid.querySelectorAll('.count-btn').forEach(b=>b.classList.remove('selected'));
+                            if(el) el.classList.add('selected');
+                            namesContainer.style.display='block';
+                            renderInputs(n);
+                        }
+
+                        countGrid.addEventListener('click',(e)=>{
+                            const b=e.target.closest('.count-btn');
+                            if(!b) return;
+                            selectCount(parseInt(b.dataset.count),b);
+                        });
+
+                        // default select 4
+                        (function defaultSelect(){
+                            const btn=countGrid.querySelector('[data-count="4"]');
+                            selectCount(4,btn);
+                        })();
+
+                        function saveAndGo(){
+                            const names=[];
+                            for(let i=0;i<selected;i++){
+                                const v=(document.getElementById('startName'+i)?.value||'').trim();
+                                names.push(v||`Player ${i+1}`);
+                            }
+                            localStorage.setItem('playerCount',String(selected));
+                            localStorage.setItem('playerNames',JSON.stringify(names));
+                            localStorage.setItem('hasCompletedSetup','true');
+                            // navigate to game
+                            window.location.href='least_count.html';
+                        }
+
+                        startBtn.addEventListener('click',saveAndGo);
+                        skipBtn.addEventListener('click',()=>{
+                            // defaults: 4 players
+                            selected=4;
+                            const names=[]; for(let i=0;i<4;i++) names.push(`Player ${i+1}`);
+                            localStorage.setItem('playerCount','4');
+                            localStorage.setItem('playerNames',JSON.stringify(names));
+                            localStorage.setItem('hasCompletedSetup','true');
+                            window.location.href='least_count.html';
+                        });
+                    })();
+                </script>
+            </body>
+
+            </html>
         .player-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
