@@ -5,6 +5,10 @@ class GameLogic {
       { name: 'Player 2', picUrl: 'avatars/boy.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
       { name: 'Player 3', picUrl: 'avatars/male-cartoon.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
       { name: 'Player 4', picUrl: 'avatars/male.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
+      { name: 'Player 5', picUrl: 'avatars/man.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
+      { name: 'Player 6', picUrl: 'avatars/people.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
+      { name: 'Player 7', picUrl: 'avatars/user.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
+      { name: 'Player 8', picUrl: 'avatars/avatar.png', count: 0, totalScore: 0, roundHistory: [], out: false, hasScoredThisRound: false },
     ];
     this.currentRound = 1;
     this.gameHistory = [];

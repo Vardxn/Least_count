@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <meta name="description" content="Least Count - A minimal and clean card game scoring app optimized for iPhone.">
-    <meta name="keywords" content="card game, scoring, least count, minimal, modern, iPhone, mobile">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
+    <meta name="description" content="Least Count - A minimal and clean card game scoring app optimized for 8 players on Android & iPhone.">
+    <meta name="keywords" content="card game, scoring, least count, minimal, modern, android, chrome, brave, mobile, 8 players">
     <meta name="theme-color" content="#000000">
 
     <!-- iOS Specific Meta Tags -->
@@ -15,21 +15,27 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="mobile-web-app-capable" content="yes">
 
+    <!-- Android Chrome/Brave Optimizations -->
+    <meta name="android-mobile-web-app-capable" content="yes">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="width">
+
     <!-- PWA and Icons -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="avatars/avatar.png">
     <link rel="apple-touch-icon" sizes="180x180" href="avatars/avatar.png">
     <link rel="icon" type="image/png" sizes="32x32" href="avatars/avatar.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="avatars/avatar.png">
 
-    <title>Least Count</title>
+    <title>Least Count - 8 Player Card Game Scorer</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
         /* ==========================================
            LEAST COUNT - CARD GAME SCORER
-           iPhone-First Premium Design System
-           Optimized for Safari & Chrome Mobile
+           Optimized for 8 Players on Android & iPhone
+           Chrome, Brave, Safari Mobile Support
         ========================================== */
 
         :root {
@@ -80,7 +86,7 @@
         }
 
         body {
-            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
             background: var(--bg-primary);
             background-image:
                 radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
@@ -91,13 +97,16 @@
             padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
             min-height: 100vh;
             font-weight: 400;
-            /* iPhone optimizations */
+            /* Android & iOS optimizations */
             -webkit-text-size-adjust: 100%;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
             overscroll-behavior: none;
             -webkit-overflow-scrolling: touch;
+            /* Android Chrome/Brave performance */
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            touch-action: manipulation;
         }
 
         .app-container {
@@ -490,11 +499,12 @@
             padding-bottom: calc(100px + env(safe-area-inset-bottom));
         }
 
-        /* Enhanced player cards */
+        /* Enhanced player cards - Optimized for 8 players */
         .players-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            max-width: 100%;
         }
 
         .player-card {
@@ -503,13 +513,16 @@
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--border-radius-lg);
-            padding: 24px;
+            padding: 20px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-md);
             position: relative;
             overflow: hidden;
             /* Fallback for Safari */
             background-color: rgba(26, 26, 26, 0.95);
+            /* Android optimization */
+            will-change: transform;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .player-card::before {
@@ -633,23 +646,25 @@
         .score-input {
             flex: 1;
             min-width: 120px;
-            min-height: 48px;
-            padding: 14px 16px;
+            min-height: 52px;
+            padding: 16px 18px;
             border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--border-radius-md);
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 500;
             background: var(--bg-surface);
             color: var(--text-primary);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: 0.01em;
-            /* iPhone optimizations */
+            /* Android & iOS optimizations */
             -webkit-appearance: none;
             appearance: none;
             -webkit-tap-highlight-color: transparent;
             -webkit-user-select: text;
             user-select: text;
             touch-action: manipulation;
+            /* Better Android input handling */
+            caret-color: var(--accent-blue);
         }
 
         .score-input:focus {
@@ -657,8 +672,8 @@
             border-color: var(--accent-blue);
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), var(--shadow-blue);
             background: var(--bg-card);
-            /* Prevent zoom on iOS */
-            font-size: 16px;
+            /* Prevent zoom on iOS & Android */
+            font-size: 18px;
         }
 
         .score-input::placeholder {
@@ -666,27 +681,29 @@
         }
 
         .add-score-btn {
-            min-width: 48px;
-            min-height: 48px;
-            padding: 14px 22px;
+            min-width: 52px;
+            min-height: 52px;
+            padding: 16px 24px;
             background: var(--gradient-blue);
             color: white;
             border: none;
             border-radius: var(--border-radius-md);
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
             box-shadow: var(--shadow-sm);
             letter-spacing: 0.01em;
-            /* iPhone optimizations */
+            /* Android & iOS optimizations */
             -webkit-appearance: none;
             appearance: none;
             -webkit-tap-highlight-color: transparent;
             -webkit-user-select: none;
             user-select: none;
             touch-action: manipulation;
+            /* Haptic feedback on Android */
+            position: relative;
         }
 
         .add-score-btn:hover {
@@ -697,6 +714,7 @@
 
         .add-score-btn:active {
             transform: translateY(0);
+            transform: scale(0.98);
         }
 
         .total-score {
@@ -977,7 +995,24 @@
             }
         }
 
-        /* iPhone-first responsive design */
+        /* Tablet view - 2 column grid for 8 players */
+        @media (min-width: 600px) and (max-width: 1024px) {
+            .players-list {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .player-card {
+                padding: 20px;
+            }
+
+            .app-container {
+                max-width: 100%;
+                padding: 0 16px;
+            }
+        }
+
+        /* Mobile-first responsive design */
         @media (max-width: 768px) {
             body {
                 padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) calc(env(safe-area-inset-bottom, 16px) + 100px) env(safe-area-inset-left, 16px);
@@ -1055,11 +1090,14 @@
             }
 
             .players-list {
-                gap: 20px;
+                gap: 16px;
+                grid-template-columns: 1fr;
+                padding: 0 8px;
             }
 
             .player-card {
-                padding: 24px;
+                padding: 18px;
+                border-radius: var(--border-radius-md);
             }
 
             .player-header {
@@ -1259,16 +1297,17 @@
         <div class="landing-container">
             <div class="welcome-box">
                 <h2>Welcome to Least Count</h2>
-                <p>A clean and minimal card game scoring app</p>
+                <p>Optimized for 8 Players • Android & iPhone Ready</p>
                 <button class="add-player-btn" id="showAddPlayerInput">Add Player</button>
             </div>
 
             <div class="player-info-card">
                 <h3>How to Play</h3>
                 <ul style="text-align: left; margin-top: 1rem;">
-                    <li>Add players to start the game</li>
+                    <li>8 players loaded by default</li>
+                    <li>Tap player names to customize</li>
                     <li>Enter scores for each round</li>
-                    <li>Players are eliminated when they reach the elimination score</li>
+                    <li>Eliminated at 100 points (adjustable)</li>
                     <li>Last player standing wins!</li>
                 </ul>
             </div>

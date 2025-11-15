@@ -1,13 +1,14 @@
 {
-    "name": "Least Count",
+    "name": "Least Count - 8 Player Card Game Scorer",
     "short_name": "LeastCount",
-    "description": "A minimal and clean card game scoring app with a dark theme.",
+    "description": "Card game scoring app optimized for 8 players on Android & iPhone. Clean minimal design with dark theme.",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#000000",
-    "theme_color": "#121212",
+    "theme_color": "#000000",
     "orientation": "portrait",
     "scope": "/",
+    "categories": ["games", "utilities"],
     "icons": [
         {
             "src": "avatars/avatar.png",
