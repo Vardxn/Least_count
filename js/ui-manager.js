@@ -19,12 +19,11 @@ class UIManager {
   }
 
   setupEventListeners() {
-    document.getElementById('showAddPlayerInput').addEventListener('click', () => this.showAddPlayerPrompt());
+    document.getElementById('newGameBtn').addEventListener('click', () => this.handleNewGame());
     document.getElementById('addRoundBtn').addEventListener('click', () => this.handleNextRound());
     document.getElementById('undoBtn').addEventListener('click', () => this.handleUndo());
     document.getElementById('resetBtn').addEventListener('click', () => this.handleReset());
     document.getElementById('leaderboardBtn').addEventListener('click', () => this.showLeaderboard());
-    document.getElementById('saveBtn').addEventListener('click', () => this.handleSave());
 
     // Handle elimination score changes
     if (this.elements.eliminationScore) {
@@ -519,6 +518,24 @@ class UIManager {
         location.reload();
       });
     }, 100);
+  }
+
+  handleNewGame() {
+    modalManager.showConfirm(
+      'Start New Game?',
+      'This will clear all current progress and let you choose players again.',
+      () => {
+        // Clear all game data
+        this.gameLogic.resetGame();
+        localStorage.removeItem('hasCompletedSetup');
+        localStorage.removeItem('playerCount');
+        localStorage.removeItem('currentGame');
+        localStorage.removeItem('offlineScores');
+        
+        // Reload to show setup screen
+        location.reload();
+      }
+    );
   }
 
   async showLeaderboard() {

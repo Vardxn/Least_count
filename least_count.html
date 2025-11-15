@@ -488,13 +488,13 @@
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
             gap: 12px;
-            max-width: 300px;
+            max-width: 320px;
             margin: 0 auto;
         }
 
         .nav-btn {
             min-width: 48px;
-            min-height: 48px;
+            min-height: 52px;
             padding: 14px 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             background: var(--gradient-card);
@@ -536,6 +536,19 @@
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+        }
+
+        #newGameBtn {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: white;
+            font-weight: 600;
+        }
+
+        #newGameBtn:hover {
+            background: linear-gradient(135deg, #34D399, #10B981);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px) scale(1.03);
         }
 
         /* Enhanced elimination settings */
@@ -1577,10 +1590,10 @@
             <h1 class="app-title">Least Count</h1>
             <div class="round-info" id="roundCounter">Round 1</div>
             <div class="nav-buttons">
+                <button class="nav-btn" id="newGameBtn">New Game</button>
                 <button class="nav-btn" id="undoBtn" disabled>Undo</button>
                 <button class="nav-btn" id="resetBtn">Reset</button>
                 <button class="nav-btn" id="leaderboardBtn">Scores</button>
-                <button class="nav-btn" id="saveBtn">Save</button>
             </div>
         </header>
 
@@ -1596,18 +1609,17 @@
 
         <div class="landing-container">
             <div class="welcome-box">
-                <h2>Welcome to Least Count</h2>
-                <p>Optimized for 8 Players • Android & iPhone Ready</p>
-                <button class="add-player-btn" id="showAddPlayerInput">Add Player</button>
+                <h2>Ready to Play!</h2>
+                <p id="gameInfoText">Playing with 4 players</p>
             </div>
 
             <div class="player-info-card">
-                <h3>How to Play</h3>
+                <h3>Quick Tips</h3>
                 <ul style="text-align: left; margin-top: 1rem;">
-                    <li>8 players loaded by default</li>
-                    <li>Tap player names to customize</li>
-                    <li>Enter scores for each round</li>
-                    <li>Eliminated at 100 points (adjustable)</li>
+                    <li>Enter each player's score for the round</li>
+                    <li>Click "Next Round" when all scores are added</li>
+                    <li>Players eliminated at 100 points (adjustable above)</li>
+                    <li>View round history by clicking 📊</li>
                     <li>Last player standing wins!</li>
                 </ul>
             </div>

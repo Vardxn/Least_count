@@ -91,6 +91,13 @@ function setupPlayerNamingModal() {
     // Skip setup and show app directly with saved player count
     const count = parseInt(savedPlayerCount);
     gameLogic.players = gameLogic.players.slice(0, count);
+    
+    // Update game info text
+    const gameInfoText = document.getElementById('gameInfoText');
+    if (gameInfoText) {
+      gameInfoText.textContent = `Playing with ${count} player${count > 1 ? 's' : ''}`;
+    }
+    
     setupModal.style.display = 'none';
     appContainer.style.display = 'block';
     return;
@@ -203,8 +210,15 @@ function setupPlayerNamingModal() {
     }
     
     // Save player count to localStorage
-    localStorage.setItem('playerCount', (selectedPlayerCount || 4).toString());
+    const finalPlayerCount = selectedPlayerCount || 4;
+    localStorage.setItem('playerCount', finalPlayerCount.toString());
     localStorage.setItem('hasCompletedSetup', 'true');
+    
+    // Update game info text
+    const gameInfoText = document.getElementById('gameInfoText');
+    if (gameInfoText) {
+      gameInfoText.textContent = `Playing with ${finalPlayerCount} player${finalPlayerCount > 1 ? 's' : ''}`;
+    }
     
     // Animate modal out
     setupModal.style.animation = 'modalSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
