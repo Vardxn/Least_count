@@ -88,7 +88,7 @@ class UIManager {
           ? `
         <div class="round-history-container">
           <button class="toggle-history-btn" data-idx="${idx}">
-            <span class="history-icon">🎯</span> View Previous Rounds
+            <span class="history-icon">🎯</span> View & Edit Previous Rounds
           </button>
           <div class="round-history-content" id="history-${idx}" style="display: none;">
             <div class="round-history-header">
@@ -102,7 +102,7 @@ class UIManager {
                 <div class="round-item" data-player="${idx}" data-round="${roundIdx}">
                   <span class="round-label">R${roundIdx + 1}:</span>
                   <span class="round-score" data-original="${score}">${score}</span>
-                  <input type="number" class="round-edit-input" value="${score}" style="display: none;" min="0" max="200">
+                  <input type="number" class="round-edit-input" value="${score}" style="display: none;" min="0" max="40">
                 </div>
               `
                 )
@@ -227,7 +227,9 @@ class UIManager {
         const isVisible = historyContent.style.display !== 'none';
 
         historyContent.style.display = isVisible ? 'none' : 'block';
-        btn.innerHTML = isVisible ? '<span class="history-icon">🎯</span> View Previous Rounds' : '<span class="history-icon">🎯</span> Hide Previous Rounds';
+        btn.innerHTML = isVisible
+          ? '<span class="history-icon">🎯</span> View & Edit Previous Rounds'
+          : '<span class="history-icon">🎯</span> Hide Previous Rounds';
       });
     });
 
@@ -446,9 +448,33 @@ class UIManager {
     if (quickTipsCard && this.gameLogic.currentRound > 1) {
       quickTipsCard.style.display = 'none';
     }
+    
+    // Lock elimination score after round 1
+    if (this.elements.eliminationScore && this.gameLogic.currentRound > 1) {
+      this.elements.eliminationScore.disabled = true;
+      this.elements.eliminationScore.style.cursor = 'not-allowed';
+      this.elements.eliminationScore.style.opacity = '0.6';
+      this.elements.eliminationScore.title = 'Elimination score cannot be changed after round 1';
+    }
   }
 
   handleNextRound() {
+    // 1) Capture any scores that are typed but not added yet
+    const inputs = document.querySelectorAll('.score-input');
+    inputs.forEach((input) => {
+      const idx = parseInt(input.getAttribute('data-idx'));
+      if (Number.isInteger(idx)) {
+        let val = parseInt(input.value, 10);
+        if (isNaN(val) || val < 0) val = 0;
+        if (val > 40) val = 40;
+        // Only update if player is not already eliminated
+        if (!this.gameLogic.players[idx].out) {
+          this.gameLogic.updatePlayerScore(idx, val);
+        }
+      }
+    });
+
+    // 2) Complete the round normally
     const eliminatedPlayers = this.gameLogic.completeRound();
 
     if (eliminatedPlayers === false) {
@@ -457,11 +483,16 @@ class UIManager {
     }
 
     if (eliminatedPlayers.length > 0) {
-      this.showConfetti();
-      setTimeout(() => {
-        const playerText = eliminatedPlayers.length === 1 ? 'Player' : 'Players';
-        modalManager.showError(`${playerText} Eliminated!`, `${eliminatedPlayers.join(', ')} eliminated! 💥`);
-      }, 500);
+      // Aggregate elimination notice; avoid clashing animations
+      const playerText = eliminatedPlayers.length === 1 ? 'Player' : 'Players';
+      const list = eliminatedPlayers.map(n => `• ${n}`).join('<br>');
+      modalManager.createModal({
+        title: `${playerText} Eliminated!`,
+        message: `<div>These ${playerText.toLowerCase()} were eliminated:<br><br>${list}</div>`,
+        type: 'error',
+        primaryButton: 'OK',
+        autoClose: 2500,
+      });
     }
 
     this.updateRoundCounter();
@@ -479,7 +510,7 @@ class UIManager {
         this.showConfetti();
         modalManager.showCelebration('🎉 Game Complete! 🎉', `${winner.name} wins the game!`);
       }, 1000);
-    } else {
+    } else if (eliminatedPlayers.length === 0) {
       const completedRoundLabel = this.gameLogic.currentRound - 1 === 1 ? 'Round 1' : `Round ${this.gameLogic.currentRound - 1}`;
       const nextRoundLabel = `Round ${this.gameLogic.currentRound}`;
       
@@ -728,5 +759,26 @@ class UIManager {
     }
 
     setTimeout(() => confetti.remove(), 1500);
+  }
+
+  showEliminationAnimation(playerName, playerCard) {
+    // Add shake animation to the card
+    if (playerCard) {
+      playerCard.classList.add('elimination-shake');
+      
+      // Create elimination overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'elimination-overlay';
+      overlay.innerHTML = `
+        <div class="elimination-icon">☠️</div>
+        <div class="elimination-text">ELIMINATED!</div>
+      `;
+      playerCard.appendChild(overlay);
+      
+      // Remove shake animation after it completes
+      setTimeout(() => {
+        playerCard.classList.remove('elimination-shake');
+      }, 1000);
+    }
   }
 }
