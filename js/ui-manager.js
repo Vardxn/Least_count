@@ -78,7 +78,7 @@ class UIManager {
       div.className = `player-card${player.out ? ' eliminated' : ''}`;
 
       const scoreInputHTML = `
-        <input type="tel" class="score-input" data-idx="${idx}" placeholder="Enter score" value="${player.count > 0 ? player.count : ''}" ${player.out ? 'disabled' : ''} inputmode="numeric" pattern="[0-9]*">
+        <input type="tel" class="score-input" data-idx="${idx}" placeholder="Enter score" value="${player.count > 0 ? player.count : ''}" ${player.out ? 'disabled' : ''} inputmode="numeric" pattern="[0-9]*" min="0" max="40">
         <button class="add-score-btn" data-idx="${idx}" ${player.out ? 'disabled' : ''}>Add</button>
       `;
 
@@ -166,7 +166,14 @@ class UIManager {
     document.querySelectorAll('.score-input').forEach((input) => {
       input.addEventListener('input', (e) => {
         const idx = parseInt(e.target.getAttribute('data-idx'));
-        const score = parseInt(e.target.value, 10) || 0;
+        let score = parseInt(e.target.value, 10) || 0;
+        
+        // Enforce max limit of 40
+        if (score > 40) {
+          score = 40;
+          e.target.value = 40;
+        }
+        
         if (!isNaN(idx)) {
           this.gameLogic.updatePlayerScore(idx, score);
           // Update the total score display immediately
@@ -184,9 +191,14 @@ class UIManager {
       btn.addEventListener('click', (e) => {
         const idx = parseInt(btn.getAttribute('data-idx'));
         const scoreInput = document.querySelector(`.score-input[data-idx="${idx}"]`);
-        const score = parseInt(scoreInput.value, 10);
+        let score = parseInt(scoreInput.value, 10);
 
         if (!isNaN(score) && score >= 0) {
+          // Enforce max limit of 40
+          if (score > 40) {
+            score = 40;
+            modalManager.showWarning('Score Limit', 'Maximum score per round is 40 points.');
+          }
           this.gameLogic.updatePlayerScore(idx, score);
           scoreInput.value = '';
           this.renderPlayers();
@@ -428,6 +440,12 @@ class UIManager {
   updateRoundCounter() {
     this.elements.roundCounter.textContent = `Round ${this.gameLogic.currentRound}`;
     this.elements.undoBtn.disabled = this.gameLogic.gameHistory.length === 0;
+    
+    // Hide quick tips card after round 1
+    const quickTipsCard = document.getElementById('quickTipsCard');
+    if (quickTipsCard && this.gameLogic.currentRound > 1) {
+      quickTipsCard.style.display = 'none';
+    }
   }
 
   handleNextRound() {
