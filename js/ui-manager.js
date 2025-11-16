@@ -450,12 +450,12 @@ class UIManager {
       quickTipsCard.style.display = 'none';
     }
     
-    // Lock elimination score after round 1
-    if (this.elements.eliminationScore && this.gameLogic.currentRound > 1) {
-      this.elements.eliminationScore.disabled = true;
-      this.elements.eliminationScore.style.cursor = 'not-allowed';
-      this.elements.eliminationScore.style.opacity = '0.6';
-      this.elements.eliminationScore.title = 'Elimination score cannot be changed after round 1';
+    // Hide entire elimination settings section after round 1
+    const eliminationSettings = document.querySelector('.elimination-settings');
+    if (eliminationSettings && this.gameLogic.currentRound > 1) {
+      eliminationSettings.style.display = 'none';
+    } else if (eliminationSettings && this.gameLogic.currentRound === 1) {
+      eliminationSettings.style.display = 'block';
     }
   }
 
