@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no">
     <meta name="description" content="Least Count - A minimal and clean card game scoring app optimized for 8 players on Android & iPhone.">
     <meta name="keywords" content="card game, scoring, least count, minimal, modern, android, chrome, brave, mobile, 8 players">
     <meta name="theme-color" content="#000000">
@@ -79,10 +79,16 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html {
             scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            /* Enable hardware acceleration */
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
         }
 
         body {
@@ -107,6 +113,14 @@
             /* Android Chrome/Brave performance */
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
             touch-action: manipulation;
+            /* Hardware acceleration */
+            will-change: scroll-position;
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            perspective: 1000px;
+            -webkit-perspective: 1000px;
         }
 
         /* ==========================================
@@ -137,7 +151,7 @@
             max-width: 600px;
             width: 100%;
             box-shadow: var(--shadow-lg), var(--shadow-blue);
-            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: modalSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes modalSlideIn {
@@ -213,7 +227,7 @@
             color: var(--text-primary);
             font-size: 16px;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             -webkit-appearance: none;
             appearance: none;
         }
@@ -243,11 +257,12 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-appearance: none;
             appearance: none;
             -webkit-tap-highlight-color: transparent;
             min-height: 56px;
+            will-change: transform, box-shadow;
         }
 
         .skip-btn {
@@ -300,11 +315,12 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-appearance: none;
             appearance: none;
             -webkit-tap-highlight-color: transparent;
             min-height: 60px;
+            will-change: transform, box-shadow;
         }
 
         .player-count-btn:hover {
@@ -327,7 +343,7 @@
         }
 
         .setup-step {
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.2s ease;
         }
 
         @keyframes fadeIn {
@@ -503,7 +519,7 @@
             font-size: 15px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             letter-spacing: 0.01em;
@@ -519,6 +535,7 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+            will-change: transform, box-shadow;
         }
 
         .nav-btn:hover {
@@ -561,7 +578,7 @@
             margin-bottom: 32px;
             text-align: center;
             box-shadow: var(--shadow-md);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .elimination-settings:hover {
@@ -606,6 +623,13 @@
             font-size: 16px;
         }
 
+        .elimination-input:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
         .elimination-label {
             font-size: 16px;
             font-weight: 500;
@@ -626,9 +650,17 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-md);
             letter-spacing: 0.01em;
+            /* Mobile touch optimizations */
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            will-change: transform, box-shadow;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
         }
 
         .add-player-btn:hover,
@@ -663,7 +695,7 @@
             padding-bottom: calc(16px + env(safe-area-inset-bottom));
             z-index: 1000;
             transform: translateY(100%);
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.25s ease-in-out;
         }
 
         .bottom-action-bar.visible {
@@ -692,12 +724,13 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             z-index: 1001;
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             max-width: calc(100vw - 60px);
             text-align: center;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            will-change: transform, opacity, box-shadow;
         }
 
         .notification-toast.show {
@@ -715,7 +748,7 @@
             background: rgba(0, 0, 0, 0.3);
             z-index: 1000;
             opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+            transition: opacity 0.2s ease-in-out;
             pointer-events: none;
         }
 
@@ -739,7 +772,7 @@
 
             /* Add subtle animation for iPhone */
             .notification-toast {
-                animation-duration: 0.4s;
+                animation-duration: 0.25s;
                 animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
             }
         }
@@ -783,15 +816,19 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--border-radius-lg);
             padding: 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-md);
             position: relative;
             overflow: hidden;
             /* Fallback for Safari */
             background-color: rgba(26, 26, 26, 0.95);
-            /* Android optimization */
+            /* Mobile optimization */
             will-change: transform;
             -webkit-tap-highlight-color: transparent;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .player-card::before {
@@ -822,11 +859,72 @@
             background: linear-gradient(145deg, #2a1a1a 0%, #1a1a1a 100%);
             border-color: rgba(239, 68, 68, 0.3);
             transform: scale(0.98);
+            position: relative;
         }
 
         .player-card.eliminated::before {
             background: linear-gradient(90deg, var(--error) 0%, var(--error-light) 100%);
             opacity: 0.8;
+        }
+
+        /* Elimination animation */
+        .elimination-shake {
+            animation: eliminationShake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+
+        @keyframes eliminationShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        .elimination-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(239, 68, 68, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-lg);
+            z-index: 10;
+            animation: eliminationFadeOut 1.2s ease-out forwards;
+        }
+
+        .elimination-icon {
+            font-size: 64px;
+            margin-bottom: 12px;
+            animation: eliminationPulse 0.8s ease-in-out;
+        }
+
+        .elimination-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.1em;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            animation: eliminationTextBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes eliminationPulse {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes eliminationTextBounce {
+            0% { transform: translateY(20px); opacity: 0; }
+            60% { transform: translateY(-10px); }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes eliminationFadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
         }
 
         .eliminated-label {
@@ -923,7 +1021,7 @@
             font-weight: 500;
             background: var(--bg-surface);
             color: var(--text-primary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: 0.01em;
             /* Android & iOS optimizations */
             -webkit-appearance: none;
@@ -934,6 +1032,10 @@
             touch-action: manipulation;
             /* Better Android input handling */
             caret-color: var(--accent-blue);
+            /* Smooth rendering */
+            will-change: border-color, box-shadow;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
         }
 
         .score-input:focus {
@@ -960,7 +1062,7 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
             box-shadow: var(--shadow-sm);
             letter-spacing: 0.01em;
@@ -973,6 +1075,7 @@
             touch-action: manipulation;
             /* Haptic feedback on Android */
             position: relative;
+            will-change: transform, box-shadow;
         }
 
         .add-score-btn:hover {
@@ -1016,12 +1119,13 @@
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
             text-align: left;
             color: var(--text-primary);
             backdrop-filter: blur(10px);
             letter-spacing: 0.01em;
+            will-change: transform, box-shadow;
         }
 
         .toggle-history-btn:hover {
@@ -1071,9 +1175,10 @@
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-sm);
             letter-spacing: 0.01em;
+            will-change: transform, box-shadow;
         }
 
         .edit-history-btn:hover {
@@ -1130,7 +1235,7 @@
             text-align: center;
             background: var(--bg-surface);
             color: var(--text-primary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .round-edit-input:focus {
@@ -1157,8 +1262,9 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: 0.01em;
+            will-change: transform, box-shadow;
         }
 
         .save-history-btn {
@@ -1284,22 +1390,26 @@
         /* Mobile-first responsive design */
         @media (max-width: 768px) {
             body {
-                padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) calc(env(safe-area-inset-bottom, 16px) + 100px) env(safe-area-inset-left, 16px);
+                padding: env(safe-area-inset-top, 12px) env(safe-area-inset-right, 12px) calc(env(safe-area-inset-bottom, 12px) + 100px) env(safe-area-inset-left, 12px);
+                /* Better scroll performance */
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-y: contain;
             }
 
             .app-title {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
+                margin-bottom: 0.5rem;
             }
 
             .header {
-                padding: 1.5rem;
-                margin-bottom: 24px;
+                padding: 1.2rem;
+                margin-bottom: 20px;
             }
 
             .landing-container {
                 flex-direction: column;
-                gap: 1.5rem;
-                margin: 1.5rem auto;
+                gap: 1.2rem;
+                margin: 1.2rem auto;
             }
 
             .welcome-box,
@@ -1552,8 +1662,12 @@
             justify-content: center;
             z-index: 9999;
             opacity: 0;
-            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             padding: 20px;
+            /* Mobile optimization */
+            will-change: opacity;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
         }
 
         .modal-overlay.show {
@@ -1569,14 +1683,21 @@
             width: 100%;
             box-shadow: var(--shadow-lg), 0 0 40px rgba(0, 0, 0, 0.5);
             transform: scale(0.9) translateY(20px);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
+            /* Mobile optimization */
+            will-change: transform;
+            transform: scale(0.9) translateY(20px) translateZ(0);
+            -webkit-transform: scale(0.9) translateY(20px) translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .modal-overlay.show .modal-dialog {
-            transform: scale(1) translateY(0);
+            transform: scale(1) translateY(0) translateZ(0);
+            -webkit-transform: scale(1) translateY(0) translateZ(0);
         }
 
         /* Wider modal for scoreboard */
@@ -1661,10 +1782,11 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: 0.01em;
             flex: 1;
             max-width: 160px;
+            will-change: transform, box-shadow;
         }
 
         .modal-btn-primary {
@@ -1947,6 +2069,278 @@
                 font-size: 14px;
             }
         }
+
+        /* ==========================================
+           RESET OPTIONS MODAL STYLES
+           Styled reset buttons in modal
+        ========================================== */
+        
+        .reset-options-container {
+            padding: 8px 0;
+        }
+
+        .reset-description {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .reset-buttons-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .reset-option-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-lg);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-height: 90px;
+            text-align: center;
+            will-change: transform, box-shadow;
+        }
+
+        .reset-option-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 0;
+        }
+
+        .reset-option-btn:hover::before {
+            opacity: 1;
+        }
+
+        .reset-option-btn > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .reset-option-btn.reset-scores {
+            background: linear-gradient(135deg, #3B82F6, #1E40AF);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .reset-option-btn.reset-scores::before {
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
+        }
+
+        .reset-option-btn.reset-scores:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            border-color: rgba(96, 165, 250, 0.5);
+        }
+
+        .reset-option-btn.reset-names {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .reset-option-btn.reset-names::before {
+            background: linear-gradient(135deg, #FCD34D, #F59E0B);
+        }
+
+        .reset-option-btn.reset-names:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+            border-color: rgba(252, 211, 77, 0.5);
+        }
+
+        .reset-option-btn.reset-all {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .reset-option-btn.reset-all::before {
+            background: linear-gradient(135deg, #F87171, #EF4444);
+        }
+
+        .reset-option-btn.reset-all:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+            border-color: rgba(248, 113, 113, 0.5);
+        }
+
+        .reset-option-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .reset-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .reset-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: block;
+            letter-spacing: 0.02em;
+        }
+
+        .reset-subtitle {
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.9;
+            display: block;
+        }
+
+        /* ==========================================
+           ROUND COMPLETE MESSAGE STYLES
+           Better formatting for round transitions
+        ========================================== */
+        
+        .round-complete-message {
+            padding: 12px 0;
+            text-align: center;
+        }
+
+        .round-info {
+            margin-bottom: 16px;
+        }
+
+        .completed-round {
+            display: inline-block;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--success);
+            padding: 10px 20px;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: var(--border-radius-md);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            letter-spacing: 0.02em;
+        }
+
+        .next-round-info {
+            margin-top: 12px;
+        }
+
+        .next-round-label {
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--accent-blue);
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Mobile responsive for reset options */
+        @media (max-width: 480px) {
+            .reset-option-btn {
+                padding: 16px 20px;
+                min-height: 80px;
+            }
+
+            .reset-icon {
+                font-size: 28px;
+            }
+
+            .reset-title {
+                font-size: 15px;
+            }
+
+            .reset-subtitle {
+                font-size: 12px;
+            }
+        }
+
+        /* ==========================================
+           WATERMARK STYLES
+           Minimal creator credit
+        ========================================== */
+        
+        .watermark {
+            position: fixed;
+            bottom: 8px;
+            right: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            opacity: 0.4;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            z-index: 100;
+            pointer-events: none;
+            user-select: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .watermark:hover {
+            opacity: 0.7;
+        }
+
+        /* Hide watermark on mobile to avoid overlap with bottom bar */
+        @media (max-width: 768px) {
+            .watermark {
+                bottom: 90px;
+                font-size: 10px;
+            }
+        }
+
+        /* ==========================================
+           ADDITIONAL MOBILE PERFORMANCE OPTIMIZATIONS
+        ========================================== */
+        
+        /* Optimize all interactive elements */
+        button,
+        input,
+        select,
+        textarea,
+        a {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        /* Better mobile scroll */
+        @media (max-width: 768px) {
+            * {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .players-list {
+                gap: 12px;
+            }
+            
+            .player-card {
+                padding: 16px;
+                margin: 0;
+            }
+            
+            /* Optimize modal for mobile */
+            .modal-dialog {
+                padding: 24px 20px;
+                margin: 0 12px;
+            }
+            
+            /* Better button sizes for mobile */
+            .add-score-btn,
+            .next-round-btn {
+                min-height: 48px;
+                font-size: 15px;
+            }
+        }
     </style>
     <!-- Debug tools - commented out for production -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
@@ -2061,6 +2455,9 @@
     <!-- Notification overlay and toast -->
     <div class="notification-overlay" id="notificationOverlay"></div>
     <div class="notification-toast" id="notificationToast"></div>
+
+    <!-- Watermark -->
+    <div class="watermark">Created by VARDXN</div>
 
     <script>
         // iPhone Safari optimizations

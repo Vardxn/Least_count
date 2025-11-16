@@ -88,7 +88,7 @@ class UIManager {
           ? `
         <div class="round-history-container">
           <button class="toggle-history-btn" data-idx="${idx}">
-            <span class="history-icon">📊</span> View Previous Rounds
+            <span class="history-icon">🎯</span> View Previous Rounds
           </button>
           <div class="round-history-content" id="history-${idx}" style="display: none;">
             <div class="round-history-header">
@@ -227,7 +227,7 @@ class UIManager {
         const isVisible = historyContent.style.display !== 'none';
 
         historyContent.style.display = isVisible ? 'none' : 'block';
-        btn.innerHTML = isVisible ? '<span class="history-icon">📊</span> View Previous Rounds' : '<span class="history-icon">📊</span> Hide Previous Rounds';
+        btn.innerHTML = isVisible ? '<span class="history-icon">🎯</span> View Previous Rounds' : '<span class="history-icon">🎯</span> Hide Previous Rounds';
       });
     });
 
@@ -482,7 +482,25 @@ class UIManager {
     } else {
       const completedRoundLabel = this.gameLogic.currentRound - 1 === 1 ? 'Round 1' : `Round ${this.gameLogic.currentRound - 1}`;
       const nextRoundLabel = `Round ${this.gameLogic.currentRound}`;
-      modalManager.showSuccess('Round Complete!', `${completedRoundLabel} completed! Starting ${nextRoundLabel}`);
+      
+      const roundMessage = `
+        <div class="round-complete-message">
+          <div class="round-info">
+            <span class="completed-round">✓ ${completedRoundLabel} Complete</span>
+          </div>
+          <div class="next-round-info">
+            <span class="next-round-label">Ready for ${nextRoundLabel}</span>
+          </div>
+        </div>
+      `;
+      
+      modalManager.createModal({
+        title: '🎯 Round Complete!',
+        message: roundMessage,
+        type: 'success',
+        primaryButton: 'Continue',
+        autoClose: 2500
+      });
       
       // Show bottom action bar on mobile after round completion
       setTimeout(() => {
@@ -502,20 +520,29 @@ class UIManager {
 
   handleReset() {
     const resetOptions = `
-      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
-        <button id="resetScores" style="padding: 14px 20px; background: linear-gradient(135deg, #3B82F6, #1E40AF); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
-          Reset Scores Only
-        </button>
-        <button id="resetNames" style="padding: 14px 20px; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
-          Change Player Names
-        </button>
-        <button id="resetAll" style="padding: 14px 20px; background: linear-gradient(135deg, #EF4444, #DC2626); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
-          Reset Everything
-        </button>
+      <div class="reset-options-container">
+        <p class="reset-description">Choose what you'd like to reset:</p>
+        <div class="reset-buttons-grid">
+          <button id="resetScores" class="reset-option-btn reset-scores">
+            <span class="reset-icon">🔄</span>
+            <span class="reset-title">Reset Scores Only</span>
+            <span class="reset-subtitle">Keep players, clear scores</span>
+          </button>
+          <button id="resetNames" class="reset-option-btn reset-names">
+            <span class="reset-icon">✏️</span>
+            <span class="reset-title">Change Player Names</span>
+            <span class="reset-subtitle">Update player names</span>
+          </button>
+          <button id="resetAll" class="reset-option-btn reset-all">
+            <span class="reset-icon">🗑️</span>
+            <span class="reset-title">Reset Everything</span>
+            <span class="reset-subtitle">Start completely fresh</span>
+          </button>
+        </div>
       </div>
     `;
     
-    modalManager.showCustom('Reset Options', resetOptions);
+    modalManager.showCustom('⚙️ Reset Options', resetOptions);
     
     // Add event listeners after modal is shown
     setTimeout(() => {
