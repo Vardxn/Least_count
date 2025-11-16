@@ -24,6 +24,7 @@ class UIManager {
     document.getElementById('undoBtn').addEventListener('click', () => this.handleUndo());
     document.getElementById('resetBtn').addEventListener('click', () => this.handleReset());
     document.getElementById('leaderboardBtn').addEventListener('click', () => this.showLeaderboard());
+    document.getElementById('editAllHistoryBtn')?.addEventListener('click', () => this.handleGlobalEditMode());
 
     // Handle elimination score changes
     if (this.elements.eliminationScore) {
@@ -493,6 +494,19 @@ class UIManager {
         primaryButton: 'OK',
         autoClose: 2500,
       });
+      
+      // Stagger per-card elimination animations after modal shows
+      setTimeout(() => {
+        eliminatedPlayers.forEach((playerName, idx) => {
+          const playerIndex = this.gameLogic.players.findIndex(p => p.name === playerName);
+          if (playerIndex !== -1) {
+            setTimeout(() => {
+              const playerCard = document.querySelector(`.player-card:nth-child(${playerIndex + 1})`);
+              this.showEliminationAnimation(playerName, playerCard);
+            }, idx * 400); // Stagger by 400ms per player
+          }
+        });
+      }, 500); // Wait 500ms after modal appears
     }
 
     this.updateRoundCounter();
@@ -780,5 +794,37 @@ class UIManager {
         playerCard.classList.remove('elimination-shake');
       }, 1000);
     }
+  }
+
+  handleGlobalEditMode() {
+    // Check if any player has round history
+    const hasHistory = this.gameLogic.players.some(p => p.roundHistory.length > 0);
+    if (!hasHistory) {
+      modalManager.showWarning('No History', 'No rounds have been played yet.');
+      return;
+    }
+
+    // Expand and enter edit mode for all players with history
+    this.gameLogic.players.forEach((player, idx) => {
+      if (player.roundHistory.length > 0) {
+        const historyContent = document.getElementById(`history-${idx}`);
+        const toggleBtn = document.querySelector(`.toggle-history-btn[data-idx="${idx}"]`);
+        
+        if (historyContent && historyContent.style.display === 'none') {
+          // Expand history
+          historyContent.style.display = 'block';
+          if (toggleBtn) {
+            toggleBtn.innerHTML = '<span class="history-icon">🎯</span> Hide Previous Rounds';
+          }
+        }
+        
+        // Enter edit mode
+        setTimeout(() => {
+          this.enterHistoryEditMode(idx);
+        }, 100 * idx); // Slight stagger for visual feedback
+      }
+    });
+
+    modalManager.showSuccess('Edit Mode Active', 'You can now edit all players\' previous scores.');
   }
 }

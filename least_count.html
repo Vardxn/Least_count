@@ -501,22 +501,28 @@
 
         .nav-buttons {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            max-width: 320px;
+            max-width: 480px;
             margin: 0 auto;
+        }
+        
+        /* Three columns on larger screens */
+        @media (min-width: 600px) {
+            .nav-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         .nav-btn {
             min-width: 48px;
             min-height: 52px;
-            padding: 14px 20px;
+            padding: 14px 16px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             background: var(--gradient-card);
             color: var(--text-primary);
             border-radius: var(--border-radius-md);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2407,6 +2413,7 @@
                 <button class="nav-btn" id="undoBtn" disabled>Undo</button>
                 <button class="nav-btn" id="resetBtn">Reset</button>
                 <button class="nav-btn" id="leaderboardBtn">Scores</button>
+                <button class="nav-btn" id="editAllHistoryBtn">Edit Scores</button>
             </div>
         </header>
 
@@ -2477,7 +2484,7 @@
                         keyboardVisible = true;
                         document.body.classList.add('keyboard-open');
                     }
-                });
+                }, { passive: true });
 
                 input.addEventListener('blur', function (e) {
                     // Handle keyboard dismissal on iPhone Safari
@@ -2494,7 +2501,7 @@
                             showBottomActionBar();
                         }, 100);
                     }
-                });
+                }, { passive: true });
             });
 
             // Function to show notification toast
@@ -2518,19 +2525,21 @@
                 overlay.addEventListener('click', function () {
                     toast.classList.remove('show');
                     overlay.classList.remove('show');
-                });
+                }, { passive: true });
             }
             
-            // Function to show/hide bottom action bar
+            // Function to show/hide bottom action bar with rAF
             function showBottomActionBar() {
-                const bottomBar = document.getElementById('bottomActionBar');
-                const nextRoundBtn = document.getElementById('addRoundBtn');
+                requestAnimationFrame(() => {
+                    const bottomBar = document.getElementById('bottomActionBar');
+                    const nextRoundBtn = document.getElementById('addRoundBtn');
 
-                if (window.innerWidth <= 768 && nextRoundBtn) {
-                    bottomBar.classList.add('visible');
-                } else {
-                    bottomBar.classList.remove('visible');
-                }
+                    if (window.innerWidth <= 768 && nextRoundBtn) {
+                        bottomBar.classList.add('visible');
+                    } else {
+                        bottomBar.classList.remove('visible');
+                    }
+                });
             }
 
             // Handle mobile next round button
@@ -2574,10 +2583,10 @@
                 buttons.forEach(btn => {
                     btn.addEventListener('touchstart', function () {
                         this.style.transform = 'scale(0.98)';
-                    });
+                    }, { passive: true });
                     btn.addEventListener('touchend', function () {
                         this.style.transform = '';
-                    });
+                    }, { passive: true });
                 });
 
                 // Prevent double-tap zoom on buttons
@@ -2601,12 +2610,16 @@
             // Initial check for bottom action bar visibility
             showBottomActionBar();
             
-            // Re-check visibility on window resize
+            // Re-check visibility on window resize with rAF
+            let resizeTimer;
             window.addEventListener('resize', function() {
                 if (!keyboardVisible) {
-                    showBottomActionBar();
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        showBottomActionBar();
+                    }, 150);
                 }
-            });
+            }, { passive: true });
         });
     </script>
 </body>
