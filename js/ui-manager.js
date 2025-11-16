@@ -465,6 +465,13 @@ class UIManager {
       const completedRoundLabel = this.gameLogic.currentRound - 1 === 1 ? 'Round 1' : `Round ${this.gameLogic.currentRound - 1}`;
       const nextRoundLabel = `Round ${this.gameLogic.currentRound}`;
       modalManager.showSuccess('Round Complete!', `${completedRoundLabel} completed! Starting ${nextRoundLabel}`);
+      
+      // Show bottom action bar on mobile after round completion
+      setTimeout(() => {
+        if (typeof showBottomActionBar === 'function') {
+          showBottomActionBar();
+        }
+      }, 100);
     }
   }
 

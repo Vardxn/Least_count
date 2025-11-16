@@ -260,4 +260,11 @@ window.addEventListener('DOMContentLoaded', function () {
 
   // Setup iOS-specific fixes
   setupIOSKeyboardFixes();
+  
+  // Ensure bottom action bar is visible on mobile after initialization
+  setTimeout(() => {
+    if (typeof showBottomActionBar === 'function') {
+      showBottomActionBar();
+    }
+  }, 500);
 });

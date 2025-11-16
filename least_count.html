@@ -1398,19 +1398,23 @@
 
             /* Hide regular next-round-section on mobile, use sticky bar instead */
             .next-round-section {
-                display: none;
+                display: none !important;
             }
 
             /* Show bottom action bar on mobile */
             .bottom-action-bar {
-                display: block;
+                display: block !important;
             }
         }
 
-        /* Desktop: hide bottom action bar */
+        /* Desktop: hide bottom action bar, show regular next-round-section */
         @media (min-width: 769px) {
             .bottom-action-bar {
-                display: none;
+                display: none !important;
+            }
+            
+            .next-round-section {
+                display: block !important;
             }
         }
 
@@ -1703,12 +1707,14 @@
                     toast.classList.remove('show');
                     overlay.classList.remove('show');
                 });
-            }            // Function to show/hide bottom action bar
+            }
+            
+            // Function to show/hide bottom action bar
             function showBottomActionBar() {
                 const bottomBar = document.getElementById('bottomActionBar');
                 const nextRoundBtn = document.getElementById('addRoundBtn');
 
-                if (window.innerWidth <= 768 && nextRoundBtn && !nextRoundBtn.style.display === 'none') {
+                if (window.innerWidth <= 768 && nextRoundBtn) {
                     bottomBar.classList.add('visible');
                 } else {
                     bottomBar.classList.remove('visible');
@@ -1771,13 +1777,6 @@
                     }
                     lastTouchEnd = now;
                 }, false);
-
-                // Handle viewport changes for keyboard
-                window.addEventListener('resize', function () {
-                    if (!keyboardVisible) {
-                        showBottomActionBar();
-                    }
-                });
             }
 
             // Add PWA install prompt for iPhone Safari
@@ -1789,6 +1788,13 @@
 
             // Initial check for bottom action bar visibility
             showBottomActionBar();
+            
+            // Re-check visibility on window resize
+            window.addEventListener('resize', function() {
+                if (!keyboardVisible) {
+                    showBottomActionBar();
+                }
+            });
         });
     </script>
 </body>
