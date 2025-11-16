@@ -1,6 +1,6 @@
 class ModalManager {
   createModal(options = {}) {
-    const { title = 'Notification', message = '', type = 'info', primaryButton = 'OK', secondaryButton = null, onPrimary = null, onSecondary = null, autoClose = null } = options;
+    const { title = 'Notification', message = '', type = 'info', primaryButton = 'OK', secondaryButton = null, onPrimary = null, onSecondary = null, autoClose = null, customClass = '' } = options;
 
     const existingModal = document.querySelector('.modal-overlay');
     if (existingModal) {
@@ -11,7 +11,7 @@ class ModalManager {
     overlay.className = 'modal-overlay';
 
     const dialog = document.createElement('div');
-    dialog.className = `modal-dialog modal-${type}`;
+    dialog.className = `modal-dialog modal-${type} ${customClass}`;
 
     const getIcon = (type) => {
       switch (type) {

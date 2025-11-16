@@ -564,36 +564,74 @@ class UIManager {
   }
 
   async showLeaderboard() {
-    const leaderboard = await gameDB.getLeaderboard(10);
-
-    let leaderboardHtml = '';
-    if (leaderboard.length === 0) {
-      leaderboardHtml = '<div class="leaderboard-empty">No games completed yet.<br>Finish a game to see scores here!</div>';
-    } else {
-      leaderboard.forEach((entry, index) => {
-        const rank = index + 1;
-        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-
-        leaderboardHtml += `
-                    <div class="leaderboard-item">
-                        <div class="leaderboard-rank">${medal}</div>
-                        <div class="leaderboard-info">
-                            <div class="leaderboard-name">${entry.winner_name || 'Unknown Player'}</div>
-                            <div class="leaderboard-stats">
-                                ${entry.total_rounds || 0} rounds • ${entry.players_count || 0} players
-                            </div>
-                        </div>
-                        <div class="leaderboard-score">${entry.final_score || 0}</div>
-                    </div>
-                `;
+    // Build scoreboard table showing all players and their round scores
+    const players = this.gameLogic.players;
+    const maxRounds = Math.max(...players.map(p => p.roundHistory.length), 0);
+    
+    if (maxRounds === 0) {
+      modalManager.createModal({
+        title: '📊 Scoreboard',
+        message: '<div class="leaderboard-empty">No rounds played yet.<br>Start playing to see scores!</div>',
+        type: 'info',
+        primaryButton: 'Close',
       });
+      return;
     }
 
+    // Build table header
+    let tableHtml = `
+      <div class="scoreboard-container">
+        <table class="scoreboard-table">
+          <thead>
+            <tr>
+              <th class="player-col">Player</th>`;
+    
+    // Add round columns
+    for (let i = 0; i < maxRounds; i++) {
+      tableHtml += `<th class="round-col">R${i + 1}</th>`;
+    }
+    
+    tableHtml += `<th class="total-col">Total</th>
+            </tr>
+          </thead>
+          <tbody>`;
+    
+    // Add player rows
+    players.forEach((player, idx) => {
+      const isEliminated = player.out;
+      const rowClass = isEliminated ? 'eliminated-row' : '';
+      
+      tableHtml += `<tr class="${rowClass}">
+        <td class="player-name-cell">
+          <img src="${player.picUrl}" class="scoreboard-avatar" alt="${player.name}">
+          <span>${player.name}</span>
+          ${isEliminated ? '<span class="eliminated-badge">OUT</span>' : ''}
+        </td>`;
+      
+      // Add scores for each round
+      for (let i = 0; i < maxRounds; i++) {
+        const score = player.roundHistory[i] !== undefined ? player.roundHistory[i] : '-';
+        const scoreClass = score !== '-' && score > 0 ? 'score-cell' : 'empty-cell';
+        tableHtml += `<td class="${scoreClass}">${score}</td>`;
+      }
+      
+      // Add total score
+      const totalClass = player.totalScore >= this.gameLogic.eliminationScore ? 'total-eliminated' : 'total-safe';
+      tableHtml += `<td class="total-score-cell ${totalClass}">${player.totalScore}</td>
+      </tr>`;
+    });
+    
+    tableHtml += `
+          </tbody>
+        </table>
+      </div>`;
+
     modalManager.createModal({
-      title: '🏆 Leaderboard',
-      message: `<div class="leaderboard-list">${leaderboardHtml}</div>`,
-      type: 'success',
+      title: '📊 Game Scoreboard',
+      message: tableHtml,
+      type: 'info',
       primaryButton: 'Close',
+      customClass: 'scoreboard-modal',
     });
   }
 

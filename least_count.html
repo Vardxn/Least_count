@@ -1579,6 +1579,12 @@
             transform: scale(1) translateY(0);
         }
 
+        /* Wider modal for scoreboard */
+        .modal-dialog.scoreboard-modal {
+            max-width: 90vw;
+            width: auto;
+        }
+
         .modal-header {
             text-align: center;
             margin-bottom: 24px;
@@ -1726,6 +1732,219 @@
 
             .modal-btn {
                 max-width: 100%;
+            }
+        }
+
+        /* ==========================================
+           SCOREBOARD TABLE STYLES
+           Table view for all players and rounds
+        ========================================== */
+        
+        .scoreboard-container {
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 60vh;
+            border-radius: var(--border-radius-md);
+            background: var(--bg-surface);
+            margin-top: 16px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .scoreboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 400px;
+        }
+
+        .scoreboard-table thead {
+            position: sticky;
+            top: 0;
+            background: var(--gradient-blue);
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .scoreboard-table th {
+            padding: 14px 12px;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .scoreboard-table th.player-col {
+            text-align: left;
+            padding-left: 16px;
+            min-width: 140px;
+            position: sticky;
+            left: 0;
+            background: var(--accent-blue);
+            z-index: 11;
+        }
+
+        .scoreboard-table th.round-col {
+            min-width: 50px;
+        }
+
+        .scoreboard-table th.total-col {
+            min-width: 70px;
+            background: var(--accent-blue-dark);
+        }
+
+        .scoreboard-table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.2s ease;
+        }
+
+        .scoreboard-table tbody tr:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .scoreboard-table tbody tr.eliminated-row {
+            opacity: 0.5;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .scoreboard-table tbody tr.eliminated-row:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .scoreboard-table td {
+            padding: 12px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .player-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left !important;
+            padding-left: 16px !important;
+            font-weight: 600;
+            position: sticky;
+            left: 0;
+            background: var(--bg-surface);
+            z-index: 5;
+            min-width: 140px;
+        }
+
+        .scoreboard-table tbody tr:hover .player-name-cell {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .scoreboard-table tbody tr.eliminated-row .player-name-cell {
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .scoreboard-table tbody tr.eliminated-row:hover .player-name-cell {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .scoreboard-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
+            flex-shrink: 0;
+        }
+
+        .eliminated-badge {
+            background: linear-gradient(135deg, var(--error) 0%, var(--error-light) 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 8px;
+            letter-spacing: 0.05em;
+        }
+
+        .score-cell {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .empty-cell {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .total-score-cell {
+            font-weight: 700;
+            font-size: 15px;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .total-score-cell.total-safe {
+            color: var(--success);
+        }
+
+        .total-score-cell.total-eliminated {
+            color: var(--error);
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .leaderboard-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        /* Scrollbar styling for scoreboard */
+        .scoreboard-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .scoreboard-container::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+            border-radius: 4px;
+        }
+
+        .scoreboard-container::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 4px;
+        }
+
+        .scoreboard-container::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue-light);
+        }
+
+        /* Mobile responsive for scoreboard */
+        @media (max-width: 600px) {
+            .scoreboard-table {
+                font-size: 12px;
+            }
+
+            .scoreboard-table th,
+            .scoreboard-table td {
+                padding: 10px 8px;
+            }
+
+            .scoreboard-table th.player-col,
+            .player-name-cell {
+                min-width: 120px;
+                padding-left: 12px !important;
+            }
+
+            .scoreboard-avatar {
+                width: 28px;
+                height: 28px;
+            }
+
+            .scoreboard-table th.round-col {
+                min-width: 45px;
+            }
+
+            .total-score-cell {
+                font-size: 14px;
             }
         }
     </style>
