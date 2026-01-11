@@ -1,0 +1,7 @@
+# OS cruft
+.DS_Store
+
+# Cloud SDK archives/binaries
+google-cloud-sdk/
+google-cloud-cli-*.tar.gz
+source ~*/
